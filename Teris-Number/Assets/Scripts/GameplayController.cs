@@ -8,10 +8,11 @@ public class GameplayController : MonoBehaviour
     [SerializeField] private Playground playground;
 
     private static GameplayController instance;
-    private int currentClickedColumnIndex;
+    private Number[,] board;
+
     public bool isDropping = false;
     public Number currentDroppingNumber; 
-
+    
    
     public static GameplayController Instance
     {
@@ -29,10 +30,6 @@ public class GameplayController : MonoBehaviour
             }
         }
     }
-
-    public int CurrentClickedColumnIndex { get; set; }
-
-    public bool IsDropping { get; set; }
 
     public Number CurrentDroppingNumber
     {
@@ -57,6 +54,7 @@ public class GameplayController : MonoBehaviour
 
     private void Start()
     {
+        board = new Number[(int)Configurations.NORMAL_BOARD_SIZE.X, (int)Configurations.NORMAL_BOARD_SIZE.Y];
         Invoke("Spawn", 1f);        
     }
 
@@ -71,17 +69,20 @@ public class GameplayController : MonoBehaviour
     public void SwitchColumn(int column)
     {
         if (currentDroppingNumber == null) return;
-        if (currentDroppingNumber.transform.position.y < CurrentColumnHeights()[column]) return;
 
-        currentDroppingNumber.UpdateNumberAfterSwitch(column, CurrentColumnHeights()[column]);
-        playground.UpdateColumnHeight(column);
-        Spawn();
-        UnityEngine.Debug.Log("col " + column + " height " + CurrentColumnHeights()[column]);
+        currentDroppingNumber.UpdateNumberAfterSwitch(column, new Vector2(playground.Columns[column].transform.position.x, CurrentColumnHeights()[column]));
+        SetupForNextNumber(column);
+
     }
 
     public void SetupForNextNumber(int droppedColumn)
     {
+        board[playground.droppedNumbersOnColumns[droppedColumn], droppedColumn] = currentDroppingNumber;
         playground.UpdateColumnHeight(droppedColumn);
+        if (playground.droppedNumbersOnColumns[droppedColumn] == Configurations.NORMAL_BOARD_SIZE.Y - 1)
+        {
+            Debug.Log("LOSE");
+        }
         currentDroppingNumber = null;
         isDropping = false;
         Spawn();

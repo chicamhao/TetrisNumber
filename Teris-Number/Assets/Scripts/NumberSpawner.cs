@@ -24,8 +24,6 @@ public class NumberSpawner : MonoBehaviour
         var rand = Random.Range(0, columns.Length - 1);
         Number number = Instantiate(numberPrefab, columns[rand].transform);
         number.Setup(this.transform, CreateColor(), rand);
-
-        UnityEngine.Debug.Log("spawing at col" + rand);
     }
 
     public Color CreateColor()

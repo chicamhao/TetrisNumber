@@ -5,6 +5,7 @@ using UniRx;
 public class Playground : MonoBehaviour
 {
     private Button[] columns;
+    public int[] droppedNumbersOnColumns = new int[(int)Configurations.NORMAL_BOARD_SIZE.Y];
 
     public Button[] Columns
     {
@@ -65,5 +66,6 @@ public class Playground : MonoBehaviour
     public void UpdateColumnHeight(int idx)
     {
         CurrentColumnHeights[idx] += Configurations.NUMBER_SIZE;
+        droppedNumbersOnColumns[idx]++;
     }
 }

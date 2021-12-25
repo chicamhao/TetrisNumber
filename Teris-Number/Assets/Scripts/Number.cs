@@ -1,6 +1,9 @@
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
+using DG.Tweening.Core;
+using DG.Tweening.Plugins.Options;
+using System.Collections;
 
 public class Number : MonoBehaviour
 {
@@ -13,11 +16,6 @@ public class Number : MonoBehaviour
     {
         get { return currentDroppingColumn; }
         set { currentDroppingColumn = value; }
-    }
-
-    public void Drop(float y)
-    {
-
     }
 
     // Start is called before the first frame update
@@ -33,7 +31,6 @@ public class Number : MonoBehaviour
         transform.SetParent(parentTrans);
         GetComponent<Image>().color = color;
         currentDroppingColumn = column;
-        Debug.Log("current column = " + column);
     }
 
     // Update is called once per frame
@@ -42,20 +39,40 @@ public class Number : MonoBehaviour
         if (!isDropped)
         if (rectTranform.anchoredPosition.y > GameplayController.Instance.CurrentColumnHeights()[currentDroppingColumn])
             transform.position = transform.position + velocity * Time.fixedDeltaTime;
-
         else
         {
-            UnityEngine.Debug.Log("dropped");
             rectTranform.anchoredPosition = new Vector2(rectTranform.anchoredPosition.x, GameplayController.Instance.CurrentColumnHeights()[currentDroppingColumn]);
             isDropped = true;
             GameplayController.Instance.SetupForNextNumber(currentDroppingColumn);
         }
     }
 
-    public void UpdateNumberAfterSwitch(int column, int height)
+    public void UpdateNumberAfterSwitch(int column, Vector2 pos)
     {
-        Drop(height);
-        currentDroppingColumn = column;
+        Debug.Log(transform.position.y);
+        if (rectTranform.anchoredPosition.y < pos.y) return;
+
+        if (column != currentDroppingColumn)
+        {
+            MoveHorizontal(pos.x, 0.2f);
+            currentDroppingColumn = column;
+        }
+
+        StartCoroutine(Drop(pos.y, 0.2f));
         isDropped = true;
+    }
+    
+    private void MoveHorizontal(float x, float time)
+    {
+        transform.DOMoveX(x, time);
+    }
+
+    private IEnumerator Drop(float y, float time)
+    {
+        yield return new WaitForSeconds(time);
+
+        var target = this.rectTranform;
+        TweenerCore<Vector2, Vector2, VectorOptions> t = DOTween.To(() => target.anchoredPosition, x => target.anchoredPosition = x, new Vector2(0, y), 0.5f);
+        t.SetOptions(AxisConstraint.Y).SetTarget(target);
     }
 }
