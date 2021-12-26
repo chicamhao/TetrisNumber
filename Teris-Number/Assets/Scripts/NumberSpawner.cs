@@ -30,7 +30,7 @@ public class NumberSpawner : MonoBehaviour
 
     public Color CreateColor(out NumberType type)
     {
-        var rand = Random.Range((int)NumberType.N2, (int)NumberType.N64);
+        var rand = Random.Range((int)NumberType.N2, (int)NumberType.N64 - 3);
         type = (NumberType)rand;
         var color = new Color();
 

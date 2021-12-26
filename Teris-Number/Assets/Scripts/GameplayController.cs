@@ -81,10 +81,9 @@ public class GameplayController : MonoBehaviour
     public void SetupForNextNumber(int droppedColumn)
     {
         var currentIdx = new Vector2(droppedColumn, playground.droppedNumbersOnColumns[droppedColumn]);
-        Debug.Log(currentIdx);
         board[droppedColumn, playground.droppedNumbersOnColumns[droppedColumn]] = currentDroppingNumber;
         playground.UpdateColumnHeight(droppedColumn, 1);
-        merger.MergeNumber(CurrentDroppingNumber, currentIdx, 0);
+        StartCoroutine(merger.MergeNumber(currentIdx, 0));
 
         currentDroppingNumber = null;
         isDropping = false;

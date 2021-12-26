@@ -6,11 +6,12 @@ public class Merger : MonoBehaviour
 {
     Number[,] board;
 
-    public IEnumerator MergeNumber(Number[,] board , Vector2 index, float time)
+    public IEnumerator MergeNumber(Vector2 index, float time)
     {
+        Debug.Log("merging" + index);
         yield return new WaitForSeconds(time);
 
-        this.board = board;
+        this.board = GameplayController.Instance.Board;
 
         if (board[(int)index.x, (int)index.y] == null)
         {
@@ -18,6 +19,7 @@ public class Merger : MonoBehaviour
         }
 
         var nMergeCases = 0;
+        var isBottomCase = false;
 
         if (CheckMergeableLeft(index)) 
         {
@@ -37,15 +39,16 @@ public class Merger : MonoBehaviour
                 topNumber.DropAUnit();
 
                 //current is top
-                board[(int)index.x - 1, (int)index.y + i - 1] = board[(int)index.x - 1, (int)index.y + i];                
+                board[(int)index.x - 1, (int)index.y + i - 1] = board[(int)index.x - 1, (int)index.y + i];
+
+                //StartCoroutine(MergeNumber(new Vector2((int)index.x - 1, (int)index.y + i - 1), .5f));
+
                 //top is null
                 board[(int)index.x - 1, (int)index.y + i] = null;
 
                 ++i;
                 topNumber = board[(int)index.x - 1, (int)index.y + i];
             }
-
-            Debug.Log("dropped " + i + " units");
         }
 
         if (CheckMergeableRight(index))
@@ -69,6 +72,8 @@ public class Merger : MonoBehaviour
                 //top is null
                 board[(int)index.x + 1, (int)index.y + i] = null;
 
+                //StartCoroutine(MergeNumber(new Vector2((int)index.x + 1, (int)index.y + i - 1), .5f));
+
                 ++i;
                 topNumber = board[(int)index.x + 1, (int)index.y + i];
             }
@@ -78,17 +83,29 @@ public class Merger : MonoBehaviour
         {
             nMergeCases++;
 
+            isBottomCase = true;
+
             board[(int)index.x, (int)index.y - 1].MoveTopAUnit();
             board[(int)index.x, (int)index.y].DropAUnit();
             board[(int)index.x, (int)index.y - 1] = board[(int)index.x, (int)index.y];
             board[(int)index.x, (int)index.y] = null;
+
             GameplayController.Instance.DropColumnHeight((int)index.x);
         }
 
-        Debug.Log("upgrade to " + nMergeCases + "level");
-
         if (nMergeCases > 0)
-            GameplayController.Instance.CurrentDroppingNumber.Upgrade(nMergeCases);
+        {
+            if (!isBottomCase)
+            {
+                board[(int)index.x, (int)index.y].Upgrade(nMergeCases);
+                StartCoroutine(MergeNumber(new Vector2((int)index.x, (int)index.y), 1.1f));
+            }
+            else
+            {
+                board[(int)index.x, (int)index.y - 1].Upgrade(nMergeCases);
+                StartCoroutine(MergeNumber(new Vector2((int)index.x, (int)index.y - 1), 1.1f));
+            }
+        }
     }
 
 
