@@ -63,9 +63,9 @@ public class Playground : MonoBehaviour
             .AddTo(this);
     }
 
-    public void UpdateColumnHeight(int idx)
+    public void UpdateColumnHeight(int idx, int isDropped)
     {
-        CurrentColumnHeights[idx] += Configurations.NUMBER_SIZE;
-        droppedNumbersOnColumns[idx]++;
+        CurrentColumnHeights[idx] += (isDropped) * Configurations.NUMBER_SIZE;
+        droppedNumbersOnColumns[idx] += isDropped;
     }
 }

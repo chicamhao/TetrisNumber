@@ -1,12 +1,14 @@
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
+using System.Collections;
+
 public class GameplayController : MonoBehaviour
 {
 
     [SerializeField] private NumberSpawner numberSpawner;
     [SerializeField] private Playground playground;
-    [SerializeField] private Mergeable mergeable;
+    [SerializeField] private Merger merger;
 
     private static GameplayController instance;
     private Number[,] board;
@@ -78,17 +80,18 @@ public class GameplayController : MonoBehaviour
 
     public void SetupForNextNumber(int droppedColumn)
     {
-        if (CheckLose(droppedColumn))
-            return;
-
         var currentIdx = new Vector2(droppedColumn, playground.droppedNumbersOnColumns[droppedColumn]);
         board[droppedColumn, playground.droppedNumbersOnColumns[droppedColumn]] = currentDroppingNumber;
-        playground.UpdateColumnHeight(droppedColumn);
-        mergeable.CheckMergeable(CurrentDroppingNumber, currentIdx);
+        playground.UpdateColumnHeight(droppedColumn, 1);
+        merger.MergeNumber(CurrentDroppingNumber, currentIdx);
 
         currentDroppingNumber = null;
         isDropping = false;
-        Spawn();
+
+        if (CheckLose(droppedColumn))
+            return;
+
+        Invoke("Spawn", 0.5f);
     }
 
     private bool CheckLose(int column)
@@ -99,5 +102,30 @@ public class GameplayController : MonoBehaviour
             return true;
         }
         return false;
+    }
+
+    public void DropColumnHeight(int column)
+    {
+        playground.UpdateColumnHeight(column, -1);
+    }
+
+    void LogForDebug()
+    {
+        for (int i = 0; i < 5; ++i)
+        {
+            for (int j = 0; j < 6; ++j)
+            {
+                if (board[i, j] != null)
+                    Debug.Log("i = " + i + ", j = " + j);
+            }
+        }
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            LogForDebug();
+        }
     }
 }

@@ -74,4 +74,64 @@ public class Number : MonoBehaviour
         TweenerCore<Vector2, Vector2, VectorOptions> t = DOTween.To(() => target.anchoredPosition, x => target.anchoredPosition = x, new Vector2(0, y), 0.5f);
         t.SetOptions(AxisConstraint.Y).SetTarget(target);
     }
+
+    public void MoveRightAUnit()
+    {
+        StartCoroutine(WaitForMoveRight());
+    }
+
+    public void MoveLeftAUnit()
+    {
+        StartCoroutine(WaitForMoveLeft());
+    }
+
+    public void MoveTopAUnit()
+    {
+        StartCoroutine(WaitForMoveTop());
+    }
+
+    public IEnumerator WaitForMoveRight()
+    {
+        yield return new WaitForSeconds(0.7f);
+        var target = this.rectTranform;
+        TweenerCore<Vector2, Vector2, VectorOptions> t = DOTween.To(() => target.anchoredPosition, x => target.anchoredPosition = x, new Vector2(target.anchoredPosition.x + Configurations.NUMBER_SIZE, 0), 0.2f);
+        t.SetOptions(AxisConstraint.X).SetTarget(target);
+        yield return t.WaitForKill();
+        Destroy(this.gameObject);
+    }
+
+    public IEnumerator WaitForMoveLeft()
+    {
+        yield return new WaitForSeconds(0.7f);
+        var target = this.rectTranform;
+        TweenerCore<Vector2, Vector2, VectorOptions> t = DOTween.To(() => target.anchoredPosition, x => target.anchoredPosition = x, new Vector2(target.anchoredPosition.x - Configurations.NUMBER_SIZE, 0), 0.2f);
+        t.SetOptions(AxisConstraint.X).SetTarget(target);
+        yield return t.WaitForKill();
+        Destroy(this.gameObject);
+    }
+
+    public void DropAUnit()
+    {
+
+        StartCoroutine(WaitForDropAUnit());
+    }
+
+    private IEnumerator WaitForDropAUnit()
+    {
+        yield return new WaitForSeconds(1f);
+
+        var target = this.rectTranform;
+        TweenerCore<Vector2, Vector2, VectorOptions> t = DOTween.To(() => target.anchoredPosition, x => target.anchoredPosition = x, new Vector2(0, target.anchoredPosition.y - Configurations.NUMBER_SIZE), 0.2f);
+        t.SetOptions(AxisConstraint.Y).SetTarget(target);
+    }
+
+    public IEnumerator WaitForMoveTop()
+    {
+        yield return new WaitForSeconds(0.7f);
+        var target = this.rectTranform;
+        TweenerCore<Vector2, Vector2, VectorOptions> t = DOTween.To(() => target.anchoredPosition, x => target.anchoredPosition = x, new Vector2(0, target.anchoredPosition.y + Configurations.NUMBER_SIZE), 0.2f);
+        t.SetOptions(AxisConstraint.Y).SetTarget(target);
+        yield return t.WaitForKill();
+        Destroy(this.gameObject);
+    }
 }
