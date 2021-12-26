@@ -58,21 +58,21 @@ public class GameplayController : MonoBehaviour
     private void Start()
     {
         board = new Number[(int)Configurations.NORMAL_BOARD_SIZE.X, (int)Configurations.NORMAL_BOARD_SIZE.Y];
-        Invoke("Spawn", 1f);        
+        StartCoroutine(Spawn(0.5f));
     }
 
-    public void Spawn()
+    public IEnumerator Spawn(float time)
     {
-        if (isDropping) return;
-
-        numberSpawner.Spawn();
-        isDropping = true;
+        yield return new WaitForSeconds(time);
+        if (currentDroppingNumber == null && !isDropping)
+            numberSpawner.Spawn();
     }
 
     public void SwitchColumn(int column)
     {
-        if (currentDroppingNumber == null) return;
+        if (currentDroppingNumber == null || !isDropping) return;
 
+        isDropping = false;
         currentDroppingNumber.UpdateNumberAfterSwitch(column, new Vector2(playground.Columns[column].transform.position.x, CurrentColumnHeights()[column]));
         SetupForNextNumber(column);
 
@@ -83,15 +83,11 @@ public class GameplayController : MonoBehaviour
         var currentIdx = new Vector2(droppedColumn, playground.droppedNumbersOnColumns[droppedColumn]);
         board[droppedColumn, playground.droppedNumbersOnColumns[droppedColumn]] = currentDroppingNumber;
         playground.UpdateColumnHeight(droppedColumn, 1);
-        StartCoroutine(merger.MergeNumber(currentIdx, 0));
-
-        currentDroppingNumber = null;
-        isDropping = false;
+        
+        merger.MergeNumber(currentIdx);
 
         if (CheckLose(droppedColumn))
             return;
-
-        Invoke("Spawn", 0.5f);
     }
 
     private bool CheckLose(int column)
@@ -107,25 +103,5 @@ public class GameplayController : MonoBehaviour
     public void DropColumnHeight(int column)
     {
         playground.UpdateColumnHeight(column, -1);
-    }
-
-    void LogForDebug()
-    {
-        for (int i = 0; i < 5; ++i)
-        {
-            for (int j = 0; j < 6; ++j)
-            {
-                if (board[i, j] != null)
-                    Debug.Log("i = " + i + ", j = " + j);
-            }
-        }
-    }
-
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.A))
-        {
-            LogForDebug();
-        }
     }
 }

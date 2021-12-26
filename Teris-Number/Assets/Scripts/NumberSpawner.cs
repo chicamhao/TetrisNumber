@@ -19,18 +19,16 @@ public class NumberSpawner : MonoBehaviour
 
     public void Spawn()
     {
-        if (GameplayController.Instance.CurrentDroppingNumber != null) return;
         columns = GameplayController.Instance.Columns();
         var rand = Random.Range(0, columns.Length - 1);
         Number number = Instantiate(numberPrefab, columns[rand].transform);
         var type = new NumberType();
-        number.Setup(this.transform, CreateColor(out type), rand, type);
-        
+        number.Setup(this.transform, CreateColor(out type), rand, type);      
     }
 
     public Color CreateColor(out NumberType type)
     {
-        var rand = Random.Range((int)NumberType.N2, (int)NumberType.N64 - 3);
+        var rand = Random.Range((int)NumberType.N2, (int)NumberType.N64);
         type = (NumberType)rand;
         var color = new Color();
 

@@ -6,17 +6,30 @@ public class Merger : MonoBehaviour
 {
     Number[,] board;
 
-    public IEnumerator MergeNumber(Vector2 index, float time)
+    public void MergeNumber(Vector2 index)
     {
-        Debug.Log("merging" + index);
-        yield return new WaitForSeconds(time);
-
         this.board = GameplayController.Instance.Board;
-
         if (board[(int)index.x, (int)index.y] == null)
         {
             throw new ArgumentException("invalid arg");
         }
+        Debug.Log(index);
+        if (!CheckMergeableLeft(index) && !CheckMergeableRight(index) && !CheckMergeableBottom(index))
+        {
+            Debug.Log("non merge");
+            GameplayController.Instance.isDropping = false;
+            GameplayController.Instance.CurrentDroppingNumber = null;
+            StartCoroutine(GameplayController.Instance.Spawn(0.5f));
+        }
+        else
+        {
+            StartCoroutine(MergeNumber(index, 0));
+        }
+    }
+
+    private IEnumerator MergeNumber(Vector2 index, float time)
+    {
+        yield return new WaitForSeconds(time);
 
         var nMergeCases = 0;
         var isBottomCase = false;
@@ -41,7 +54,7 @@ public class Merger : MonoBehaviour
                 //current is top
                 board[(int)index.x - 1, (int)index.y + i - 1] = board[(int)index.x - 1, (int)index.y + i];
 
-                //StartCoroutine(MergeNumber(new Vector2((int)index.x - 1, (int)index.y + i - 1), .5f));
+                StartCoroutine(MergeNumber(new Vector2((int)index.x - 1, (int)index.y + i - 1), .5f));
 
                 //top is null
                 board[(int)index.x - 1, (int)index.y + i] = null;
@@ -72,7 +85,7 @@ public class Merger : MonoBehaviour
                 //top is null
                 board[(int)index.x + 1, (int)index.y + i] = null;
 
-                //StartCoroutine(MergeNumber(new Vector2((int)index.x + 1, (int)index.y + i - 1), .5f));
+                StartCoroutine(MergeNumber(new Vector2((int)index.x + 1, (int)index.y + i - 1), .5f));
 
                 ++i;
                 topNumber = board[(int)index.x + 1, (int)index.y + i];
@@ -88,6 +101,7 @@ public class Merger : MonoBehaviour
             board[(int)index.x, (int)index.y - 1].MoveTopAUnit();
             board[(int)index.x, (int)index.y].DropAUnit();
             board[(int)index.x, (int)index.y - 1] = board[(int)index.x, (int)index.y];
+            GameplayController.Instance.CurrentDroppingNumber = board[(int)index.x, (int)index.y - 1];
             board[(int)index.x, (int)index.y] = null;
 
             GameplayController.Instance.DropColumnHeight((int)index.x);
@@ -104,6 +118,17 @@ public class Merger : MonoBehaviour
             {
                 board[(int)index.x, (int)index.y - 1].Upgrade(nMergeCases);
                 StartCoroutine(MergeNumber(new Vector2((int)index.x, (int)index.y - 1), 1.1f));
+            }
+        }
+        else
+        {
+            //base case
+            if (board[(int)index.x, (int)index.y] == GameplayController.Instance.CurrentDroppingNumber)
+            {
+                Debug.Log("stop recursive here");
+                GameplayController.Instance.isDropping = false;
+                GameplayController.Instance.CurrentDroppingNumber = null;
+                StartCoroutine(GameplayController.Instance.Spawn(0f));
             }
         }
     }

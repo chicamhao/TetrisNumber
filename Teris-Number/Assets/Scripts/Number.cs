@@ -28,6 +28,7 @@ public class Number : MonoBehaviour
     public void Setup(Transform parentTrans, Color color, int column, NumberType type)
     {
         GameplayController.Instance.CurrentDroppingNumber = this;
+        GameplayController.Instance.isDropping = true;
         transform.name = type.ToString();
         numType = type;
         transform.SetParent(parentTrans);
@@ -45,7 +46,9 @@ public class Number : MonoBehaviour
         {
             rectTranform.anchoredPosition = new Vector2(rectTranform.anchoredPosition.x, GameplayController.Instance.CurrentColumnHeights()[currentDroppingColumn]);
             isDropped = true;
-            GameplayController.Instance.SetupForNextNumber(currentDroppingColumn);
+             GameplayController.Instance.isDropping = false;
+             GameplayController.Instance.currentDroppingNumber = null;
+             GameplayController.Instance.SetupForNextNumber(currentDroppingColumn);
         }
     }
 
@@ -146,7 +149,7 @@ public class Number : MonoBehaviour
     {
         yield return new WaitForSeconds(1f);
 
-        numType = (NumberType)((int)numType + n);
+        numType = (NumberType)(n + (int)numType);
         transform.name = numType.ToString();
         GetComponent<Image>().color = CreateColor(numType);
     }
