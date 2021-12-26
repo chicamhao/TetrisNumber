@@ -90,3 +90,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   currentDroppingColumn: 0
   isDropped: 0
+  mergeable: {fileID: 0}

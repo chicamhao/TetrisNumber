@@ -24,10 +24,10 @@ public class Number : MonoBehaviour
         rectTranform = GetComponent<RectTransform>();
     }
 
-    public void Setup(Transform parentTrans, Color color, int column)
+    public void Setup(Transform parentTrans, Color color, int column, int type)
     {
         GameplayController.Instance.CurrentDroppingNumber = this;
-
+        transform.name = type.ToString();
         transform.SetParent(parentTrans);
         GetComponent<Image>().color = color;
         currentDroppingColumn = column;
@@ -49,7 +49,6 @@ public class Number : MonoBehaviour
 
     public void UpdateNumberAfterSwitch(int column, Vector2 pos)
     {
-        Debug.Log(transform.position.y);
         if (rectTranform.anchoredPosition.y < pos.y) return;
 
         if (column != currentDroppingColumn)

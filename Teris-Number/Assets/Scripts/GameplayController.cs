@@ -6,6 +6,7 @@ public class GameplayController : MonoBehaviour
 
     [SerializeField] private NumberSpawner numberSpawner;
     [SerializeField] private Playground playground;
+    [SerializeField] private Mergeable mergeable;
 
     private static GameplayController instance;
     private Number[,] board;
@@ -13,7 +14,7 @@ public class GameplayController : MonoBehaviour
     public bool isDropping = false;
     public Number currentDroppingNumber; 
     
-   
+    public Number[,] Board { get { return board; } }
     public static GameplayController Instance
     {
         get
@@ -77,14 +78,26 @@ public class GameplayController : MonoBehaviour
 
     public void SetupForNextNumber(int droppedColumn)
     {
-        board[playground.droppedNumbersOnColumns[droppedColumn], droppedColumn] = currentDroppingNumber;
+        if (CheckLose(droppedColumn))
+            return;
+
+        var currentIdx = new Vector2(droppedColumn, playground.droppedNumbersOnColumns[droppedColumn]);
+        board[droppedColumn, playground.droppedNumbersOnColumns[droppedColumn]] = currentDroppingNumber;
         playground.UpdateColumnHeight(droppedColumn);
-        if (playground.droppedNumbersOnColumns[droppedColumn] == Configurations.NORMAL_BOARD_SIZE.Y - 1)
-        {
-            Debug.Log("LOSE");
-        }
+        mergeable.CheckMergeable(CurrentDroppingNumber, currentIdx);
+
         currentDroppingNumber = null;
         isDropping = false;
         Spawn();
+    }
+
+    private bool CheckLose(int column)
+    {
+        if (playground.droppedNumbersOnColumns[column] == Configurations.NORMAL_BOARD_SIZE.Y - 1)
+        {
+            Debug.Log("LOSE");
+            return true;
+        }
+        return false;
     }
 }

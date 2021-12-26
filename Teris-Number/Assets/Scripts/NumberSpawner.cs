@@ -23,12 +23,15 @@ public class NumberSpawner : MonoBehaviour
         columns = GameplayController.Instance.Columns();
         var rand = Random.Range(0, columns.Length - 1);
         Number number = Instantiate(numberPrefab, columns[rand].transform);
-        number.Setup(this.transform, CreateColor(), rand);
+        var type = new NumberType();
+        number.Setup(this.transform, CreateColor(out type), rand, (int)type);
+        
     }
 
-    public Color CreateColor()
+    public Color CreateColor(out NumberType type)
     {
         var rand = Random.Range((int)NumberType.N2, (int)NumberType.N64);
+        type = (NumberType)rand;
         var color = new Color();
 
         switch (rand)
