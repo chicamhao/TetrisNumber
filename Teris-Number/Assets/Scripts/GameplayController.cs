@@ -81,9 +81,10 @@ public class GameplayController : MonoBehaviour
     public void SetupForNextNumber(int droppedColumn)
     {
         var currentIdx = new Vector2(droppedColumn, playground.droppedNumbersOnColumns[droppedColumn]);
+        Debug.Log(currentIdx);
         board[droppedColumn, playground.droppedNumbersOnColumns[droppedColumn]] = currentDroppingNumber;
         playground.UpdateColumnHeight(droppedColumn, 1);
-        merger.MergeNumber(CurrentDroppingNumber, currentIdx);
+        merger.MergeNumber(CurrentDroppingNumber, currentIdx, 0);
 
         currentDroppingNumber = null;
         isDropping = false;
@@ -96,7 +97,7 @@ public class GameplayController : MonoBehaviour
 
     private bool CheckLose(int column)
     {
-        if (playground.droppedNumbersOnColumns[column] == Configurations.NORMAL_BOARD_SIZE.Y - 1)
+        if (playground.droppedNumbersOnColumns[column] == Configurations.NORMAL_BOARD_SIZE.Y)
         {
             Debug.Log("LOSE");
             return true;
@@ -123,7 +124,7 @@ public class GameplayController : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.A))
         {
             LogForDebug();
         }

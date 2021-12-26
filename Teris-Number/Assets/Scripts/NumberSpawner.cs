@@ -1,21 +1,21 @@
 using UnityEngine;
 using UnityEngine.UI;
 
+public enum NumberType
+{
+    N2,
+    N4,
+    N8,
+    N16,
+    N32,
+    N64
+};
+
 public class NumberSpawner : MonoBehaviour
 {
     [SerializeField] Number numberPrefab;
 
     private Button[] columns;
-
-    public enum NumberType
-    {
-        N2,
-        N4,
-        N8,
-        N16,
-        N32,
-        N64
-    };
 
     public void Spawn()
     {
@@ -24,7 +24,7 @@ public class NumberSpawner : MonoBehaviour
         var rand = Random.Range(0, columns.Length - 1);
         Number number = Instantiate(numberPrefab, columns[rand].transform);
         var type = new NumberType();
-        number.Setup(this.transform, CreateColor(out type), rand, (int)type);
+        number.Setup(this.transform, CreateColor(out type), rand, type);
         
     }
 
@@ -58,7 +58,6 @@ public class NumberSpawner : MonoBehaviour
                 color = Color.black;
                 break;
         }
-
         return color;
     }
 }

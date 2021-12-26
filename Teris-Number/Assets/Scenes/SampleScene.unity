@@ -454,7 +454,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   numberSpawner: {fileID: 73804575}
   playground: {fileID: 1606292414}
-  mergeable: {fileID: 209054314}
+  merger: {fileID: 209054314}
   isDropping: 0
   currentDroppingNumber: {fileID: 0}
 --- !u!114 &209054314

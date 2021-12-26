@@ -11,6 +11,7 @@ public class Number : MonoBehaviour
     private Vector3 velocity = new Vector3(0f, -0.2f, 0f);
     public int currentDroppingColumn;
     public bool isDropped = false;
+    public NumberType numType;
 
     public int CurrentDroppingColumn
     {
@@ -24,10 +25,11 @@ public class Number : MonoBehaviour
         rectTranform = GetComponent<RectTransform>();
     }
 
-    public void Setup(Transform parentTrans, Color color, int column, int type)
+    public void Setup(Transform parentTrans, Color color, int column, NumberType type)
     {
         GameplayController.Instance.CurrentDroppingNumber = this;
         transform.name = type.ToString();
+        numType = type;
         transform.SetParent(parentTrans);
         GetComponent<Image>().color = color;
         currentDroppingColumn = column;
@@ -133,5 +135,49 @@ public class Number : MonoBehaviour
         t.SetOptions(AxisConstraint.Y).SetTarget(target);
         yield return t.WaitForKill();
         Destroy(this.gameObject);
+    }
+
+    public void Upgrade(int n)
+    {
+        StartCoroutine(WaitForUpgrade(n));
+    }
+
+    private IEnumerator WaitForUpgrade(int n)
+    {
+        yield return new WaitForSeconds(1f);
+
+        numType = (NumberType)((int)numType + n);
+        transform.name = numType.ToString();
+        GetComponent<Image>().color = CreateColor(numType);
+    }
+
+    public Color CreateColor( NumberType type)
+    {
+        var color = new Color();
+        switch ((int)type)
+        {
+            case 0:
+                color = Color.red;
+                break;
+            case 1:
+                color = Color.green;
+                break;
+            case 2:
+                color = Color.blue;
+                break;
+            case 3:
+                color = Color.yellow;
+                break;
+            case 4:
+                color = Color.cyan;
+                break;
+            case 5:
+                color = Color.grey;
+                break;
+            default:
+                color = Color.black;
+                break;
+        }
+        return color;
     }
 }
