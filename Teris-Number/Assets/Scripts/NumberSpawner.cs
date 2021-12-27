@@ -8,7 +8,12 @@ public enum NumberType
     N8,
     N16,
     N32,
-    N64
+    N64,
+    N128,
+    N256,
+    N512,
+    N1024,
+    N2048
 };
 
 public class NumberSpawner : MonoBehaviour
@@ -52,6 +57,7 @@ public class NumberSpawner : MonoBehaviour
             case 5:
                 color = Color.grey;
                 break;
+
             default:
                 color = Color.black;
                 break;
