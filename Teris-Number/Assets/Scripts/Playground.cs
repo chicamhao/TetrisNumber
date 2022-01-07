@@ -7,12 +7,14 @@ public class Playground : MonoBehaviour
     private Button[] columns;
     public int[] droppedNumbersOnColumns = new int[(int)Configurations.NORMAL_BOARD_SIZE.Y];
 
-    public Button[] Columns
-    {
-        get { return columns; }
-    }
+    public Button[] Columns { get { return columns; } }
 
     public int[] CurrentColumnHeights { get; } = new int[5];
+
+    public void SetColumnHeights(int[] chs)
+    {
+        for (int i = 0; i < Configurations.NORMAL_BOARD_SIZE.X; ++i) CurrentColumnHeights[i] = chs[i];
+    }
 
     private void Awake()
     {

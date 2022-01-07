@@ -1,6 +1,5 @@
 using UnityEngine;
 using UnityEngine.UI;
-using DG.Tweening;
 using System.Collections;
 
 public class GameplayController : MonoBehaviour
@@ -9,6 +8,8 @@ public class GameplayController : MonoBehaviour
     [SerializeField] private NumberSpawner numberSpawner;
     [SerializeField] private Playground playground;
     [SerializeField] private Merger merger;
+    [SerializeField] private Button save;
+    [SerializeField] private Button load;
 
     private static GameplayController instance;
     private Number[,] board;
@@ -50,14 +51,14 @@ public class GameplayController : MonoBehaviour
         return playground.Columns;
     }
 
-    private void Awake()
-    {
-        instance = this;
-    }
-
     private void Start()
     {
+        instance = this;
+
         board = new Number[(int)Configurations.NORMAL_BOARD_SIZE.X, (int)Configurations.NORMAL_BOARD_SIZE.Y];
+        
+        save.onClick.AddListener(Save);
+        load.onClick.AddListener(Load);
         StartCoroutine(Spawn(0.5f));
     }
 
@@ -103,5 +104,67 @@ public class GameplayController : MonoBehaviour
     public void DropColumnHeight(int column)
     {
         playground.UpdateColumnHeight(column, -1);
+    }
+
+    private void Save()
+    {
+        //save column's height
+        for (int i = 0; i < Configurations.NORMAL_BOARD_SIZE.X; i++)
+        {
+            PlayerPrefs.SetInt(i.ToString(), playground.CurrentColumnHeights[i]);
+        }
+
+        //save board
+        for (int i = 0; i < Configurations.NORMAL_BOARD_SIZE.X; i++)
+        {
+            for (int j = 0; j < Configurations.NORMAL_BOARD_SIZE.Y; j++)
+            {
+                if (board[i, j] != null)
+                {
+                    Debug.Log("index i = " + i + ", j = " + j + ", numbertype = " + (int)board[i, j].NumberType);
+                    PlayerPrefs.SetInt((i, j).ToString(), (int)board[i, j].NumberType);
+                }
+                else
+                    PlayerPrefs.SetInt((i, j).ToString(), -1);
+            }
+        }
+    }
+
+    private void ClearBoard()
+    {
+        for (int i = 0; i < Configurations.NORMAL_BOARD_SIZE.X; i++)
+        {
+            for (int j = 0; j < Configurations.NORMAL_BOARD_SIZE.Y; j++)
+            {
+                if ((board[i, j] != null))
+                    Destroy(board[i, j].gameObject, .5f);
+            }
+        }
+    }
+
+    private void Load()
+    {
+        ClearBoard();
+        Destroy(currentDroppingNumber.gameObject, .5f);
+        isDropping = false;
+
+        var columnsHeight = new int[(int)Configurations.NORMAL_BOARD_SIZE.X];
+
+        for (int i = 0; i < Configurations.NORMAL_BOARD_SIZE.X; i++)
+        {
+            columnsHeight[i] = PlayerPrefs.GetInt(i.ToString());
+        }
+
+        playground.SetColumnHeights(columnsHeight);
+
+        StartCoroutine(WaitingLoad());
+    }
+    private IEnumerator WaitingLoad()
+    {
+        yield return new WaitForSeconds(1f);
+
+        numberSpawner.Load(playground.Columns, board);
+
+        Spawn(.5f);
     }
 }

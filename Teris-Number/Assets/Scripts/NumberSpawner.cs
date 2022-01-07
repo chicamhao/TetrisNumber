@@ -64,4 +64,51 @@ public class NumberSpawner : MonoBehaviour
         }
         return color;
     }
+
+    public Color GetColor(NumberType type)
+    {
+        var color = new Color();
+        switch ((int)type)
+        {
+            case 0:
+                color = Color.red;
+                break;
+            case 1:
+                color = Color.green;
+                break;
+            case 2:
+                color = Color.blue;
+                break;
+            case 3:
+                color = Color.yellow;
+                break;
+            case 4:
+                color = Color.cyan;
+                break;
+            case 5:
+                color = Color.grey;
+                break;
+
+            default:
+                color = Color.black;
+                break;
+        }
+        return color;
+    }
+
+    public void Load(Button[] columns, Number[,] board)
+    {
+        for (int i = 0; i < Configurations.NORMAL_BOARD_SIZE.X; i++)
+        {
+            for (int j = 0; j < Configurations.NORMAL_BOARD_SIZE.Y; j++)
+            {
+                if (PlayerPrefs.GetInt((i, j).ToString()) == -1) return;
+
+                var number = Instantiate(numberPrefab, columns[i].transform);
+                var type = (NumberType)PlayerPrefs.GetInt((i, j).ToString());
+                number.Setup(this.transform, GetColor(type), j, type);
+                board[i, j] = number;
+            }
+        }
+    }
 }

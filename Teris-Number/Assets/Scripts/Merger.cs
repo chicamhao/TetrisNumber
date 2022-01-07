@@ -16,7 +16,6 @@ public class Merger : MonoBehaviour
         Debug.Log(index);
         if (!CheckMergeableLeft(index) && !CheckMergeableRight(index) && !CheckMergeableBottom(index))
         {
-            Debug.Log("non merge");
             GameplayController.Instance.isDropping = false;
             GameplayController.Instance.CurrentDroppingNumber = null;
             StartCoroutine(GameplayController.Instance.Spawn(0.5f));
