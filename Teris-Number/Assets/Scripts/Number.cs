@@ -154,6 +154,8 @@ public class Number : MonoBehaviour
         GetComponent<Image>().color = CreateColor(numType);
     }
 
+    public NumberType NumberType { get { return numType; } set { numType = value; } }
+
     public Color CreateColor( NumberType type)
     {
         var color = new Color();
