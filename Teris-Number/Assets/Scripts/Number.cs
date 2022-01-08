@@ -7,10 +7,11 @@ using System.Collections;
 
 public class Number : MonoBehaviour
 {
+    [SerializeField]
     private RectTransform rectTranform;
-    private Vector3 velocity = new Vector3(0f, -0.2f, 0f);
     public int currentDroppingColumn;
     public bool isDropped = false;
+    public Vector2 index;
     public NumberType numType;
 
     public int CurrentDroppingColumn
@@ -19,15 +20,9 @@ public class Number : MonoBehaviour
         set { currentDroppingColumn = value; }
     }
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        rectTranform = GetComponent<RectTransform>();
-    }
 
     public void Setup(Transform parentTrans, Color color, int column, NumberType type)
     {
-        GameplayController.Instance.CurrentDroppingNumber = this;
         GameplayController.Instance.isDropping = true;
         transform.name = type.ToString();
         numType = type;
@@ -40,15 +35,17 @@ public class Number : MonoBehaviour
     void FixedUpdate()
     {
         if (!isDropped)
-        if (rectTranform.anchoredPosition.y > GameplayController.Instance.CurrentColumnHeights()[currentDroppingColumn])
-            transform.position = transform.position + velocity * Time.fixedDeltaTime;
-        else
         {
-            rectTranform.anchoredPosition = new Vector2(rectTranform.anchoredPosition.x, GameplayController.Instance.CurrentColumnHeights()[currentDroppingColumn]);
-            isDropped = true;
-             GameplayController.Instance.isDropping = false;
-             GameplayController.Instance.currentDroppingNumber = null;
-             GameplayController.Instance.SetupForNextNumber(currentDroppingColumn);
+            if (rectTranform.anchoredPosition.y > GameplayController.Instance.CurrentColumnHeights()[currentDroppingColumn])
+                transform.position = transform.position + Configurations.NumberDroppingVelocity * Time.fixedDeltaTime;
+            else
+            {
+                rectTranform.anchoredPosition = new Vector2(rectTranform.anchoredPosition.x, GameplayController.Instance.CurrentColumnHeights()[currentDroppingColumn]);
+                isDropped = true;
+                GameplayController.Instance.isDropping = false;
+                GameplayController.Instance.currentDroppingNumber = null;
+                GameplayController.Instance.SetupForNextNumber(currentDroppingColumn);
+            }
         }
     }
 
@@ -143,6 +140,11 @@ public class Number : MonoBehaviour
     public void Upgrade(int n)
     {
         StartCoroutine(WaitForUpgrade(n));
+    }
+
+    public void SetRectPosition(float x, float y)
+    {
+        rectTranform.anchoredPosition = new Vector2(x, y);
     }
 
     private IEnumerator WaitForUpgrade(int n)

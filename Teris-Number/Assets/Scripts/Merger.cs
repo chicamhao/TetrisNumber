@@ -146,7 +146,7 @@ public class Merger : MonoBehaviour
 
     private bool CheckMergeableRight(Vector2 index)
     {
-        if (index.x + 1 > Configurations.NORMAL_BOARD_SIZE.X - 1) return false;
+        if (index.x + 1 > Configurations.NORMAL_BOARD_SIZE.x - 1) return false;
         if (board[(int)index.x + 1, (int)index.y] != null && board[(int)index.x, (int)index.y].numType == board[(int)index.x + 1, (int)index.y].numType)
         {
             return true;

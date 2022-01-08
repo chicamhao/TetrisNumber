@@ -55,7 +55,7 @@ public class GameplayController : MonoBehaviour
     {
         instance = this;
 
-        board = new Number[(int)Configurations.NORMAL_BOARD_SIZE.X, (int)Configurations.NORMAL_BOARD_SIZE.Y];
+        board = new Number[(int)Configurations.NORMAL_BOARD_SIZE.y, (int)Configurations.NORMAL_BOARD_SIZE.y];
         
         save.onClick.AddListener(Save);
         load.onClick.AddListener(Load);
@@ -82,6 +82,7 @@ public class GameplayController : MonoBehaviour
     public void SetupForNextNumber(int droppedColumn)
     {
         var currentIdx = new Vector2(droppedColumn, playground.droppedNumbersOnColumns[droppedColumn]);
+        int y = playground.droppedNumbersOnColumns[droppedColumn];
         board[droppedColumn, playground.droppedNumbersOnColumns[droppedColumn]] = currentDroppingNumber;
         playground.UpdateColumnHeight(droppedColumn, 1);
         
@@ -93,7 +94,7 @@ public class GameplayController : MonoBehaviour
 
     private bool CheckLose(int column)
     {
-        if (playground.droppedNumbersOnColumns[column] == Configurations.NORMAL_BOARD_SIZE.Y)
+        if (playground.droppedNumbersOnColumns[column] == Configurations.NORMAL_BOARD_SIZE.y)
         {
             Debug.Log("LOSE");
             return true;
@@ -109,35 +110,31 @@ public class GameplayController : MonoBehaviour
     private void Save()
     {
         //save column's height
-        for (int i = 0; i < Configurations.NORMAL_BOARD_SIZE.X; i++)
+        for (int i = 0; i < Configurations.NORMAL_BOARD_SIZE.x; i++)
         {
             PlayerPrefs.SetInt(i.ToString(), playground.CurrentColumnHeights[i]);
         }
 
-        //save board
-        for (int i = 0; i < Configurations.NORMAL_BOARD_SIZE.X; i++)
+        //save dropped numbers on columns
+        for (int i = 0; i < Configurations.NORMAL_BOARD_SIZE.x; i++)
         {
-            for (int j = 0; j < Configurations.NORMAL_BOARD_SIZE.Y; j++)
+            var key = "dropped" + i.ToString();
+            PlayerPrefs.SetInt(key, playground.droppedNumbersOnColumns[i]);
+        }
+
+        //save board
+        for (int i = 0; i < Configurations.NORMAL_BOARD_SIZE.x; i++)
+        {
+            for (int j = 0; j < Configurations.NORMAL_BOARD_SIZE.y; j++)
             {
+                var key = (i, j).ToString();
                 if (board[i, j] != null)
                 {
                     Debug.Log("index i = " + i + ", j = " + j + ", numbertype = " + (int)board[i, j].NumberType);
-                    PlayerPrefs.SetInt((i, j).ToString(), (int)board[i, j].NumberType);
+                    PlayerPrefs.SetInt(key, (int)board[i, j].NumberType);
                 }
                 else
-                    PlayerPrefs.SetInt((i, j).ToString(), -1);
-            }
-        }
-    }
-
-    private void ClearBoard()
-    {
-        for (int i = 0; i < Configurations.NORMAL_BOARD_SIZE.X; i++)
-        {
-            for (int j = 0; j < Configurations.NORMAL_BOARD_SIZE.Y; j++)
-            {
-                if ((board[i, j] != null))
-                    Destroy(board[i, j].gameObject, .5f);
+                    PlayerPrefs.SetInt(key, -1);
             }
         }
     }
@@ -145,26 +142,74 @@ public class GameplayController : MonoBehaviour
     private void Load()
     {
         ClearBoard();
-        Destroy(currentDroppingNumber.gameObject, .5f);
-        isDropping = false;
 
-        var columnsHeight = new int[(int)Configurations.NORMAL_BOARD_SIZE.X];
+        for (int i = 0; i < Configurations.NORMAL_BOARD_SIZE.x; i++)
+            playground.CurrentColumnHeights[i] = PlayerPrefs.GetInt(i.ToString());
 
-        for (int i = 0; i < Configurations.NORMAL_BOARD_SIZE.X; i++)
+        for (int i = 0; i < Configurations.NORMAL_BOARD_SIZE.x; i++)
         {
-            columnsHeight[i] = PlayerPrefs.GetInt(i.ToString());
+            var key = "dropped" + i.ToString();
+            playground.droppedNumbersOnColumns[i] = PlayerPrefs.GetInt(key);
         }
-
-        playground.SetColumnHeights(columnsHeight);
 
         StartCoroutine(WaitingLoad());
     }
+
     private IEnumerator WaitingLoad()
     {
         yield return new WaitForSeconds(1f);
 
         numberSpawner.Load(playground.Columns, board);
 
-        Spawn(.5f);
+        if (currentDroppingNumber)
+            StartCoroutine(Spawn(.5f));
+    }
+
+    private void ClearBoard()
+    {
+        for (int i = 0; i < Configurations.NORMAL_BOARD_SIZE.x; i++)
+        {
+            for (int j = 0; j < Configurations.NORMAL_BOARD_SIZE.y; j++)
+            {
+                if ((board[i, j] != null))
+                {
+                    Destroy(board[i, j].gameObject, .5f);
+                    board[i, j] = null;
+                }
+            }
+        }
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            for (int i = 0; i < Configurations.NORMAL_BOARD_SIZE.x; i++)
+            {
+                for (int j = 0; j < Configurations.NORMAL_BOARD_SIZE.y; j++)
+                {
+                    if ((board[i, j] != null))
+                    {
+                        Debug.Log("index i = " + i + ", j = " + j + ", numbertype = " + (int)board[i, j].NumberType);
+                    }
+                }
+            }
+        }
+
+        if (Input.GetKeyDown(KeyCode.A))
+        {
+            for (int i = 0; i < Configurations.NORMAL_BOARD_SIZE.x; i++)
+            {
+                Debug.Log(playground.CurrentColumnHeights[i]);
+            }
+        }
+
+        if (Input.GetKeyDown(KeyCode.S))
+        {
+            for (int i = 0; i < Configurations.NORMAL_BOARD_SIZE.x; i++)
+            {
+                Debug.Log(playground.droppedNumbersOnColumns[i]);
+            }
+        }
     }
 }

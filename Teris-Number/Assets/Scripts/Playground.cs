@@ -5,16 +5,11 @@ using UniRx;
 public class Playground : MonoBehaviour
 {
     private Button[] columns;
-    public int[] droppedNumbersOnColumns = new int[(int)Configurations.NORMAL_BOARD_SIZE.Y];
+    public int[] droppedNumbersOnColumns = new int[(int)Configurations.NORMAL_BOARD_SIZE.y];
 
     public Button[] Columns { get { return columns; } }
 
     public int[] CurrentColumnHeights { get; } = new int[5];
-
-    public void SetColumnHeights(int[] chs)
-    {
-        for (int i = 0; i < Configurations.NORMAL_BOARD_SIZE.X; ++i) CurrentColumnHeights[i] = chs[i];
-    }
 
     private void Awake()
     {
@@ -23,7 +18,7 @@ public class Playground : MonoBehaviour
         //initilize columns height
         for (int i = 0; i < CurrentColumnHeights.Length; ++i)
         {
-            CurrentColumnHeights[i] = (((int)-Configurations.NORMAL_BOARD_SIZE.Y * Configurations.NUMBER_SIZE) + Configurations.NUMBER_SIZE) / 2;
+            CurrentColumnHeights[i] = (((int)-Configurations.NORMAL_BOARD_SIZE.y * Configurations.NUMBER_SIZE) + Configurations.NUMBER_SIZE) / 2;
         }
     }
     void Start()
