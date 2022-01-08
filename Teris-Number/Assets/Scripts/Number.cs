@@ -7,8 +7,9 @@ using System.Collections;
 
 public class Number : MonoBehaviour
 {
-    [SerializeField]
-    private RectTransform rectTranform;
+    [SerializeField] private RectTransform rectTranform;
+    [SerializeField] private Button button;
+
     public int currentDroppingColumn;
     public bool isDropped = false;
     public Vector2 index;
@@ -20,6 +21,10 @@ public class Number : MonoBehaviour
         set { currentDroppingColumn = value; }
     }
 
+    private void Start()
+    {
+        button.onClick.AddListener(() => GameplayController.Instance.OnClickNumber(this));    
+    }
 
     public void Setup(Transform parentTrans, Color color, int column, NumberType type)
     {
@@ -34,7 +39,7 @@ public class Number : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
-        if (!isDropped)
+        if (!isDropped && !GameplayController.Instance.isUsingHammer)
         {
             if (rectTranform.anchoredPosition.y > GameplayController.Instance.CurrentColumnHeights()[currentDroppingColumn])
                 transform.position = transform.position + Configurations.NumberDroppingVelocity * Time.fixedDeltaTime;
@@ -187,4 +192,5 @@ public class Number : MonoBehaviour
         }
         return color;
     }
+
 }
