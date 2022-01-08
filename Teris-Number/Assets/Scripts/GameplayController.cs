@@ -10,14 +10,15 @@ public class GameplayController : MonoBehaviour
     [SerializeField] private Merger merger;
     [SerializeField] private Button save;
     [SerializeField] private Button load;
+    [SerializeField] private Hammer hammer;
 
     private static GameplayController instance;
     private Number[,] board;
-
+    public bool isUsingHammer = false;
     public bool isDropping = false;
     public Number currentDroppingNumber; 
-    
     public Number[,] Board { get { return board; } }
+
     public static GameplayController Instance
     {
         get
@@ -180,6 +181,40 @@ public class GameplayController : MonoBehaviour
         }
     }
 
+    public void UseHammer()
+    {
+        isUsingHammer = true;
+    }
+
+    public void CancelHammer()
+    {
+        hammer.CancelHammer();
+        isUsingHammer = false;
+    }
+
+    public void OnClickNumber(Number number)
+    {
+        if (!isUsingHammer) return;
+
+        var index = (-1, -1);
+        for (int i = 0; i < Configurations.NORMAL_BOARD_SIZE.x; i++)
+        {
+            for (int j = 0; j < Configurations.NORMAL_BOARD_SIZE.y; j++)
+            {
+                if ((board[i, j] != null && board[i,j] == number))
+                {
+                    index = (i, j);
+                    break;
+                }
+            }
+            if (index != (-1, -1)) break;
+        }
+        Debug.Log(index);
+        Destroy(board[index.Item1, index.Item2].gameObject, .5f);
+        playground.UpdateColumnHeight(index.Item1, -1);
+        board[index.Item1, index.Item2] = null;
+        CancelHammer();
+    }
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.Space))
