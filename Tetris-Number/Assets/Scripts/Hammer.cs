@@ -10,28 +10,29 @@ public class Hammer : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        button.onClick.AddListener(UseHammer);
+        button.onClick.AddListener(HammerHandle);
     }
 
-    private void UseHammer()
+    private void HammerHandle()
     {
         if (!isUsed)
         {
             panel.DOAnchorPosY(panel.anchoredPosition.y - 200, 1f);
-            GameplayController.Instance.UseHammer();
+            GameplayController.Instance.isUsingHammer = true;
         }
         else
         {
             CancelHammer();
+            GameplayController.Instance.isUsingHammer = false;
         }
 
         isUsed = !isUsed;
     }
-    
+
+
     public void CancelHammer()
     {
         panel.DOAnchorPosY(panel.anchoredPosition.y + 200, 1f);
         isUsed = false;
     }
-
 }

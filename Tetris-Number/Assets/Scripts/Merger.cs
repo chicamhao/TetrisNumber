@@ -8,12 +8,11 @@ public class Merger : MonoBehaviour
 
     public void MergeNumber(Vector2 index)
     {
-        this.board = GameplayController.Instance.Board;
         if (board[(int)index.x, (int)index.y] == null)
         {
             throw new ArgumentException("invalid arg");
         }
-        Debug.Log(index);
+
         if (!CheckMergeableLeft(index) && !CheckMergeableRight(index) && !CheckMergeableBottom(index))
         {
             GameplayController.Instance.isDropping = false;
@@ -26,9 +25,13 @@ public class Merger : MonoBehaviour
         }
     }
 
-    private IEnumerator MergeNumber(Vector2 index, float time)
+    public IEnumerator MergeNumber(Vector2 index, float time)
     {
+        this.board = GameplayController.Instance.Board;
+
         yield return new WaitForSeconds(time);
+
+        Debug.Log(index);
 
         var nMergeCases = 0;
         var isBottomCase = false;
@@ -79,7 +82,7 @@ public class Merger : MonoBehaviour
                 //drop that top unit
                 topNumber.DropAUnit();
 
-                //upper is top 
+                //current is top 
                 board[(int)index.x + 1, (int)index.y + i - 1] = board[(int)index.x + 1, (int)index.y + i];
                 //top is null
                 board[(int)index.x + 1, (int)index.y + i] = null;

@@ -15,6 +15,8 @@ public class Number : MonoBehaviour
     public Vector2 index;
     public NumberType numType;
 
+    private Sprite[] sprites;
+
     public int CurrentDroppingColumn
     {
         get { return currentDroppingColumn; }
@@ -23,21 +25,23 @@ public class Number : MonoBehaviour
 
     private void Start()
     {
-        button.onClick.AddListener(() => GameplayController.Instance.OnClickNumber(this));    
+        button.onClick.AddListener(() => GameplayController.Instance.OnClickNumber(this));
     }
 
-    public void Setup(Transform parentTrans, Color color, int column, NumberType type)
+    public void Setup(Transform parentTrans, Sprite[] sprites, int column, NumberType type)
     {
+        this.sprites = sprites;
+
         GameplayController.Instance.isDropping = true;
         transform.name = type.ToString();
         numType = type;
         transform.SetParent(parentTrans);
-        GetComponent<Image>().color = color;
+        GetComponent<Image>().sprite = sprites[(int)type];
         currentDroppingColumn = column;
     }
 
     // Update is called once per frame
-    void FixedUpdate()
+    void Update()
     {
         if (!isDropped && !GameplayController.Instance.isUsingHammer)
         {
@@ -158,39 +162,8 @@ public class Number : MonoBehaviour
 
         numType = (NumberType)(n + (int)numType);
         transform.name = numType.ToString();
-        GetComponent<Image>().color = CreateColor(numType);
+        GetComponent<Image>().sprite = sprites[(int)numType];
     }
 
     public NumberType NumberType { get { return numType; } set { numType = value; } }
-
-    public Color CreateColor( NumberType type)
-    {
-        var color = new Color();
-        switch ((int)type)
-        {
-            case 0:
-                color = Color.red;
-                break;
-            case 1:
-                color = Color.green;
-                break;
-            case 2:
-                color = Color.blue;
-                break;
-            case 3:
-                color = Color.yellow;
-                break;
-            case 4:
-                color = Color.cyan;
-                break;
-            case 5:
-                color = Color.grey;
-                break;
-            default:
-                color = Color.black;
-                break;
-        }
-        return color;
-    }
-
 }

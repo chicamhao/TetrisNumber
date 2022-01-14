@@ -83,7 +83,6 @@ public class GameplayController : MonoBehaviour
     public void SetupForNextNumber(int droppedColumn)
     {
         var currentIdx = new Vector2(droppedColumn, playground.droppedNumbersOnColumns[droppedColumn]);
-        int y = playground.droppedNumbersOnColumns[droppedColumn];
         board[droppedColumn, playground.droppedNumbersOnColumns[droppedColumn]] = currentDroppingNumber;
         playground.UpdateColumnHeight(droppedColumn, 1);
         
@@ -181,16 +180,6 @@ public class GameplayController : MonoBehaviour
         }
     }
 
-    public void UseHammer()
-    {
-        isUsingHammer = true;
-    }
-
-    public void CancelHammer()
-    {
-        hammer.CancelHammer();
-        isUsingHammer = false;
-    }
 
     public void OnClickNumber(Number number)
     {
@@ -209,42 +198,34 @@ public class GameplayController : MonoBehaviour
             }
             if (index != (-1, -1)) break;
         }
-        Debug.Log(index);
         Destroy(board[index.Item1, index.Item2].gameObject, .5f);
-        playground.UpdateColumnHeight(index.Item1, -1);
-        board[index.Item1, index.Item2] = null;
-        CancelHammer();
+        DropColumnHeight(index.Item1);
+        DropColumnAndMerge(new Vector2(index.Item1, index.Item2));
+        hammer.CancelHammer();
+        isUsingHammer = false;
     }
-    private void Update()
+
+    private void DropColumnAndMerge(Vector2 index)
     {
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            for (int i = 0; i < Configurations.NORMAL_BOARD_SIZE.x; i++)
-            {
-                for (int j = 0; j < Configurations.NORMAL_BOARD_SIZE.y; j++)
-                {
-                    if ((board[i, j] != null))
-                    {
-                        Debug.Log("index i = " + i + ", j = " + j + ", numbertype = " + (int)board[i, j].NumberType);
-                    }
-                }
-            }
-        }
+        //move all current column down
+        var i = 1;
+        var topNumber = board[(int)index.x, (int)index.y + i];
 
-        if (Input.GetKeyDown(KeyCode.A))
+        while (topNumber != null)
         {
-            for (int i = 0; i < Configurations.NORMAL_BOARD_SIZE.x; i++)
-            {
-                Debug.Log(playground.CurrentColumnHeights[i]);
-            }
-        }
+            topNumber.DropAUnit();
 
-        if (Input.GetKeyDown(KeyCode.S))
-        {
-            for (int i = 0; i < Configurations.NORMAL_BOARD_SIZE.x; i++)
-            {
-                Debug.Log(playground.droppedNumbersOnColumns[i]);
-            }
+            //current is upper 
+            board[(int)index.x, (int)index.y + i - 1] = topNumber;
+            //upper is null
+            board[(int)index.x, (int)index.y + i] = null;
+
+            merger.MergeNumber(new Vector2((int)index.x, (int)index.y + i - 1), .5f);
+
+            ++i;
+
+            //update topnumber for next loop
+            topNumber = board[(int)index.x, (int)index.y + i];
         }
     }
 }
