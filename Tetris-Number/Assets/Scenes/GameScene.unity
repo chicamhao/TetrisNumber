@@ -225,6 +225,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   numberPrefab: {fileID: 2456766558238174065, guid: 94b7015543170e844b7a3ccdf1de6c1f, type: 3}
+  sprites:
+  - {fileID: 8236814533494187757, guid: c0c052c2681aff844a9f2cf403354e97, type: 3}
+  - {fileID: 6341918590101960269, guid: c0c052c2681aff844a9f2cf403354e97, type: 3}
+  - {fileID: 2129929921474788979, guid: c0c052c2681aff844a9f2cf403354e97, type: 3}
+  - {fileID: 125374129562183727, guid: c0c052c2681aff844a9f2cf403354e97, type: 3}
+  - {fileID: 1337005473091665696, guid: c0c052c2681aff844a9f2cf403354e97, type: 3}
+  - {fileID: -2614070076441484269, guid: c0c052c2681aff844a9f2cf403354e97, type: 3}
+  - {fileID: -1121147191939383087, guid: c0c052c2681aff844a9f2cf403354e97, type: 3}
+  - {fileID: -8342518833176740702, guid: c0c052c2681aff844a9f2cf403354e97, type: 3}
+  - {fileID: 7170345285916177649, guid: c0c052c2681aff844a9f2cf403354e97, type: 3}
+  - {fileID: -5272377926279959747, guid: c0c052c2681aff844a9f2cf403354e97, type: 3}
+  - {fileID: -4584676966373343438, guid: c0c052c2681aff844a9f2cf403354e97, type: 3}
+  - {fileID: 8071611717150519360, guid: c0c052c2681aff844a9f2cf403354e97, type: 3}
 --- !u!224 &73804576
 RectTransform:
   m_ObjectHideFlags: 0
@@ -544,7 +557,7 @@ MonoBehaviour:
   merger: {fileID: 209054314}
   save: {fileID: 1241312504}
   load: {fileID: 1906758600}
-  hammer: {fileID: 0}
+  hammer: {fileID: 707883187}
   isUsingHammer: 0
   isDropping: 0
   currentDroppingNumber: {fileID: 0}

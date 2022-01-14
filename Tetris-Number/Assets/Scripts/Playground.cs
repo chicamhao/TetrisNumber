@@ -18,7 +18,7 @@ public class Playground : MonoBehaviour
         //initilize columns height
         for (int i = 0; i < CurrentColumnHeights.Length; ++i)
         {
-            CurrentColumnHeights[i] = (((int)-Configurations.NORMAL_BOARD_SIZE.y * Configurations.NUMBER_SIZE) + Configurations.NUMBER_SIZE) / 2;
+            CurrentColumnHeights[i]= (((int)-Configurations.NORMAL_BOARD_SIZE.y * Configurations.NUMBER_SIZE) + Configurations.NUMBER_SIZE) / 2;
         }
     }
     void Start()

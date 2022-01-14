@@ -220,7 +220,7 @@ public class GameplayController : MonoBehaviour
             //upper is null
             board[(int)index.x, (int)index.y + i] = null;
 
-            merger.MergeNumber(new Vector2((int)index.x, (int)index.y + i - 1), .5f);
+            StartCoroutine(merger.MergeNumber(new Vector2((int)index.x, (int)index.y + i - 1), .5f, true));
 
             ++i;
 

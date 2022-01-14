@@ -8,6 +8,8 @@ public class Merger : MonoBehaviour
 
     public void MergeNumber(Vector2 index)
     {
+        this.board = GameplayController.Instance.Board;
+
         if (board[(int)index.x, (int)index.y] == null)
         {
             throw new ArgumentException("invalid arg");
@@ -25,9 +27,10 @@ public class Merger : MonoBehaviour
         }
     }
 
-    public IEnumerator MergeNumber(Vector2 index, float time)
-    {
-        this.board = GameplayController.Instance.Board;
+    public IEnumerator MergeNumber(Vector2 index, float time, bool isUseHammer = false)
+    { 
+        if (isUseHammer)
+            this.board = GameplayController.Instance.Board;
 
         yield return new WaitForSeconds(time);
 
@@ -87,7 +90,7 @@ public class Merger : MonoBehaviour
                 //top is null
                 board[(int)index.x + 1, (int)index.y + i] = null;
 
-                StartCoroutine(MergeNumber(new Vector2((int)index.x + 1, (int)index.y + i - 1), .5f));
+                StartCoroutine(MergeNumber(new Vector2((int)index.x + 1, (int)index.y + i - 1), .5f, isUseHammer));
 
                 ++i;
                 topNumber = board[(int)index.x + 1, (int)index.y + i];
@@ -114,18 +117,18 @@ public class Merger : MonoBehaviour
             if (!isBottomCase)
             {
                 board[(int)index.x, (int)index.y].Upgrade(nMergeCases);
-                StartCoroutine(MergeNumber(new Vector2((int)index.x, (int)index.y), 1.1f));
+                StartCoroutine(MergeNumber(new Vector2((int)index.x, (int)index.y), 1.1f, isUseHammer));
             }
             else
             {
                 board[(int)index.x, (int)index.y - 1].Upgrade(nMergeCases);
-                StartCoroutine(MergeNumber(new Vector2((int)index.x, (int)index.y - 1), 1.1f));
+                StartCoroutine(MergeNumber(new Vector2((int)index.x, (int)index.y - 1), 1.1f, isUseHammer));
             }
         }
         else
         {
             //base case
-            if (board[(int)index.x, (int)index.y] == GameplayController.Instance.CurrentDroppingNumber)
+            if (board[(int)index.x, (int)index.y] == GameplayController.Instance.CurrentDroppingNumber && !isUseHammer)
             {
                 Debug.Log("stop recursive here");
                 GameplayController.Instance.isDropping = false;
