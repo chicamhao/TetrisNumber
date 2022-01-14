@@ -2,13 +2,13 @@
 #
 # Get latest from https://github.com/github/gitignore/blob/master/Unity.gitignore
 #
-/Teris-Number/[Ll]ibrary/
-/Teris-Number/[Tt]emp/
-/Teris-Number/[Oo]bj/
-/Teris-Number/[Bb]uild/
-/Teris-Number/[Bb]uilds/
-/Teris-Number/[Ll]ogs/
-/Teris-Number/[Mm]emoryCaptures/
+/Tetris-Number/[Ll]ibrary/
+/Tetris-Number/[Tt]emp/
+/Tetris-Number/[Oo]bj/
+/Tetris-Number/[Bb]uild/
+/Tetris-Number/[Bb]uilds/
+/Tetris-Number/[Ll]ogs/
+/Tetris-Number/[Mm]emoryCaptures/
 
 # Asset meta data should only be ignored when the corresponding asset is also ignored
 !/[Aa]ssets/**/*.meta
