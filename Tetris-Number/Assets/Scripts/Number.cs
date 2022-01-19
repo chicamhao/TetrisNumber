@@ -51,8 +51,8 @@ public class Number : MonoBehaviour
             {
                 rectTranform.anchoredPosition = new Vector2(rectTranform.anchoredPosition.x, GameplayController.Instance.CurrentColumnHeights()[currentDroppingColumn]);
                 isDropped = true;
-                GameplayController.Instance.isDropping = false;
-                GameplayController.Instance.currentDroppingNumber = null;
+                // GameplayController.Instance.isDropping = false;
+                // GameplayController.Instance.currentDroppingNumber = null;
                 GameplayController.Instance.SetupForNextNumber(currentDroppingColumn);
             }
         }
