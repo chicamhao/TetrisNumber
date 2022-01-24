@@ -14,7 +14,7 @@ public class Number : MonoBehaviour
     public bool isDropped = false;
     public Vector2 index;
     public NumberType numType;
-
+    public SpecialNumberType specType = SpecialNumberType.None;
     private Sprite[] sprites;
 
     public int CurrentDroppingColumn
@@ -28,16 +28,12 @@ public class Number : MonoBehaviour
         button.onClick.AddListener(() => GameplayController.Instance.OnClickNumber(this));
     }
 
-    public void Setup(Transform parentTrans, Sprite[] sprites, int column, NumberType type, bool isSpecial = false)
+    public void Setup(Transform parentTrans, Sprite[] sprites, int column, NumberType type)
     {
         GameplayController.Instance.isDropping = true;
         transform.SetParent(parentTrans);
 
-        if (isSpecial)
-        {
-            GameplayController.Instance.isDroppingSpecialNumber = true;
-        }
-        else
+        if (specType == SpecialNumberType.None)
         {
             this.sprites = sprites;
             transform.name = type.ToString();

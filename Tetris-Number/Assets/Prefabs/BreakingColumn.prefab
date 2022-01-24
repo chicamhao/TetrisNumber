@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 4092498435090158658}
   - component: {fileID: 6834969905251246978}
   - component: {fileID: 511493773129474629}
-  - component: {fileID: 7485636555504475588}
+  - component: {fileID: -1780919531893194325}
   m_Layer: 5
   m_Name: BreakingColumn
   m_TagString: Number
@@ -121,7 +121,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
---- !u!114 &7485636555504475588
+--- !u!114 &-1780919531893194325
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -130,7 +130,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 4379944959129579097}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 86fe14af154278041830216b7739d99b, type: 3}
+  m_Script: {fileID: 11500000, guid: 5dcd32532c9535a4abd6ccd2f39c2188, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   rectTransform: {fileID: 6708400072456895607}
@@ -139,3 +139,4 @@ MonoBehaviour:
   isDropped: 0
   index: {x: 0, y: 0}
   numType: 0
+  specType: 3

@@ -139,3 +139,4 @@ MonoBehaviour:
   isDropped: 0
   index: {x: 0, y: 0}
   numType: 0
+  specType: 1

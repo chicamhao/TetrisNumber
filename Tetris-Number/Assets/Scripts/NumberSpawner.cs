@@ -19,7 +19,8 @@ public enum NumberType
 
 public enum SpecialNumberType
 {
-    BreakingAround = 1,
+    None,
+    BreakingAround,
     BreakingRow,
     BreakingColumn
 }
@@ -44,18 +45,12 @@ public class NumberSpawner : MonoBehaviour
         var type = (NumberType)SpawningNumberTest();
 
         Number number;
-        if ((int)type > currentMaximumSpawningNumber)
-        {
-            number = Instantiate(numberPrefab[(int)type - currentMaximumSpawningNumber], columns[rand].transform);
-            number.Setup(this.transform, sprites, rand, type, true);
-        }
+        if ((int)type > currentMaximumSpawningNumber)       
+            number = Instantiate(numberPrefab[(int)type - currentMaximumSpawningNumber], columns[rand].transform);       
         else
-
-        {
             number = Instantiate(numberPrefab[0], columns[rand].transform);
-            number.Setup(this.transform, sprites, rand, type);
-        }
-
+        
+        number.Setup(this.transform, sprites, rand, type);
 
         GameplayController.Instance.CurrentDroppingNumber = number;
     }
@@ -73,7 +68,7 @@ public class NumberSpawner : MonoBehaviour
         if (s > currentMaximumSpawningNumber)
         {
             s = 0;
-            return currentMaximumSpawningNumber + (int)SpecialNumberType.BreakingAround;
+            return currentMaximumSpawningNumber + (int)SpecialNumberType.BreakingColumn;
         }
         s++;
 

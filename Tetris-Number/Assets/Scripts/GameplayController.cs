@@ -17,7 +17,6 @@ public class GameplayController : MonoBehaviour
     private Number[,] board;
     public bool isUsingHammer = false;
     public bool isDropping = false;
-    public bool isDroppingSpecialNumber = false;
     public Number currentDroppingNumber; 
     public Number[,] Board { get { return board; } }
 
@@ -86,28 +85,32 @@ public class GameplayController : MonoBehaviour
     {
         var currentIdx = new Vector2(droppedColumn, playground.droppedNumbersOnColumns[droppedColumn]);
 
-        if (!isDroppingSpecialNumber) {
-            board[(int)currentIdx.x, (int)currentIdx.y] = currentDroppingNumber;
-            playground.UpdateColumnHeight(droppedColumn, 1);
-            merger.MergeNumber(currentIdx);
-
-            if (CheckLose(droppedColumn))
-            {
-                Time.timeScale = 0f;
-                return;
-            }
-        }
-        else
+        switch (currentDroppingNumber.specType)
         {
-            BreakAround(currentIdx);
-        }
+            case SpecialNumberType.None:
+                board[(int)currentIdx.x, (int)currentIdx.y] = currentDroppingNumber;
+                playground.UpdateColumnHeight(droppedColumn, 1);
+                merger.MergeNumber(currentIdx);
+
+                if (CheckLose(droppedColumn))
+                {
+                    Time.timeScale = 0f;
+                    return;
+                }
+                break;
+            case SpecialNumberType.BreakingAround:
+                BreakAround(currentIdx);
+                break;
+            case SpecialNumberType.BreakingColumn:
+                BreakColumn(currentIdx);
+                break;
+        }  
     }
 
     public void BreakAround(Vector2 index)
     {
         int x = (int)index.x;
         int y = (int)index.y;
-        Debug.Log("dropping special at " + index);
 
         var destroyNumbers = new List<Number>();
 
@@ -134,8 +137,6 @@ public class GameplayController : MonoBehaviour
             bottomBreakingNumber++;
             destroyNumbers.Add(board[(int)index.x, (int)index.y - 1]);
         }
-
-        Debug.Log("destroying ... " + destroyNumbers.Count);
 
         destroyNumbers
             .ForEach(x => Destroy(x.gameObject, 1f));
@@ -177,12 +178,29 @@ public class GameplayController : MonoBehaviour
 
         if (!isMergeable)
         {
-            Debug.Log("haha");
             currentDroppingNumber = null;
             isDropping = false;
-            isDroppingSpecialNumber = false;
             StartCoroutine(Spawn(1f));
         }
+    }
+
+    public void BreakColumn(Vector2 index)
+    {
+        Debug.Log(index);
+        var x = (int)index.x;
+        var y = (int)index.y;
+
+        for (int i = 0; i < playground.droppedNumbersOnColumns[x]; ++i)
+        {
+
+            Destroy(board[x, i].gameObject, 1f);
+        }
+
+        Destroy(currentDroppingNumber.gameObject, 1f);
+        playground.UpdateColumnHeight(x , -playground.droppedNumbersOnColumns[x]);
+        currentDroppingNumber = null;
+        isDropping = false;
+        StartCoroutine(Spawn(1f));
     }
 
     private bool CheckLose(int column)
@@ -272,7 +290,6 @@ public class GameplayController : MonoBehaviour
             }
         }
     }
-
 
     public void OnClickNumber(Number number)
     {
