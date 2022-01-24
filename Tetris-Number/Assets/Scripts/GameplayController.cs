@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using System.Collections.Generic;
 
 public class GameplayController : MonoBehaviour
 {
@@ -16,6 +17,7 @@ public class GameplayController : MonoBehaviour
     private Number[,] board;
     public bool isUsingHammer = false;
     public bool isDropping = false;
+    public bool isDroppingSpecialNumber = false;
     public Number currentDroppingNumber; 
     public Number[,] Board { get { return board; } }
 
@@ -83,13 +85,104 @@ public class GameplayController : MonoBehaviour
     public void SetupForNextNumber(int droppedColumn)
     {
         var currentIdx = new Vector2(droppedColumn, playground.droppedNumbersOnColumns[droppedColumn]);
-        board[droppedColumn, playground.droppedNumbersOnColumns[droppedColumn]] = currentDroppingNumber;
-        playground.UpdateColumnHeight(droppedColumn, 1);
-        
-        merger.MergeNumber(currentIdx);
 
-        if (CheckLose(droppedColumn))
-            return;
+        if (!isDroppingSpecialNumber) {
+            board[(int)currentIdx.x, (int)currentIdx.y] = currentDroppingNumber;
+            playground.UpdateColumnHeight(droppedColumn, 1);
+            merger.MergeNumber(currentIdx);
+
+            if (CheckLose(droppedColumn))
+            {
+                Time.timeScale = 0f;
+                return;
+            }
+        }
+        else
+        {
+            BreakAround(currentIdx);
+        }
+    }
+
+    public void BreakAround(Vector2 index)
+    {
+        int x = (int)index.x;
+        int y = (int)index.y;
+        Debug.Log("dropping special at " + index);
+
+        var destroyNumbers = new List<Number>();
+
+        var leftVerticalBreakingNumber = 0;
+        var rightVerticalBreakingNumber = 0;
+        var bottomBreakingNumber = 0;
+        for (int i = -1; i <= 1; ++i)
+        {
+            if (index.x - 1 >= 0 && index.y + i >= 0 && index.y + i < Configurations.NORMAL_BOARD_SIZE.y && board[(int)index.x - 1, (int)index.y + i] != null)
+            {
+                leftVerticalBreakingNumber++;
+                destroyNumbers.Add(board[(int)index.x - 1, (int)index.y + i]);
+            }
+
+            if (index.x + 1 < Configurations.NORMAL_BOARD_SIZE.x && index.y + i >= 0 && index.y + i < Configurations.NORMAL_BOARD_SIZE.y && board[(int)index.x + 1, (int)index.y + i] != null)
+            {
+                rightVerticalBreakingNumber++;
+                destroyNumbers.Add(board[(int)index.x + 1, (int)index.y + i]);
+            }
+        }
+
+        if (index.y - 1 >= 0 && board[(int)index.x, (int)index.y - 1] != null)
+        {
+            bottomBreakingNumber++;
+            destroyNumbers.Add(board[(int)index.x, (int)index.y - 1]);
+        }
+
+        Debug.Log("destroying ... " + destroyNumbers.Count);
+
+        destroyNumbers
+            .ForEach(x => Destroy(x.gameObject, 1f));
+
+        playground.UpdateColumnHeight(x - 1, -leftVerticalBreakingNumber);
+        playground.UpdateColumnHeight(x + 1, -rightVerticalBreakingNumber);
+        playground.UpdateColumnHeight(x, -bottomBreakingNumber);
+
+        var isMergeable = false;
+        if (leftVerticalBreakingNumber == 3)
+        {
+            int up = 2;
+            while (up < Configurations.NORMAL_BOARD_SIZE.y && board[x - 1, y + up] != null)
+            {
+                isMergeable = true;
+                board[x - 1, y + up].Drop3Units();
+                board[x - 1, y + up - 3] = board[x - 1, y + up];
+                board[x - 1, y + up] = null;
+                StartCoroutine(merger.MergeNumber(new Vector2((int)index.x - 1, (int)index.y + up - 3), .5f, false, true));
+                up++;
+            }
+        }
+
+        if (rightVerticalBreakingNumber == 3)
+        {
+            int up = 2;
+            while (up < Configurations.NORMAL_BOARD_SIZE.y && board[x + 1, y + up] != null)
+            {
+                isMergeable = true;
+                board[x + 1, y + up].Drop3Units();
+                board[x + 1, y + up - 3] = board[x + 1, y + up];
+                board[x + 1, y + up] = null;
+                StartCoroutine(merger.MergeNumber(new Vector2((int)index.x + 1, (int)index.y + up - 3), .5f, false, true));
+                up++;
+            }
+        }
+
+        Destroy(currentDroppingNumber.gameObject, 1f);
+
+        if (!isMergeable)
+        {
+            Debug.Log("haha");
+            currentDroppingNumber = null;
+            isDropping = false;
+            isDroppingSpecialNumber = false;
+            StartCoroutine(Spawn(1f));
+        }
     }
 
     private bool CheckLose(int column)

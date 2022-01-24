@@ -62,7 +62,10 @@ public class Playground : MonoBehaviour
 
     public void UpdateColumnHeight(int idx, int isDropped)
     {
-        CurrentColumnHeights[idx] += (isDropped) * Configurations.NUMBER_SIZE;
-        droppedNumbersOnColumns[idx] += isDropped;
+        if (idx >= 0 && idx < Configurations.NORMAL_BOARD_SIZE.x)
+        {
+            CurrentColumnHeights[idx] += (isDropped) * Configurations.NUMBER_SIZE;
+            droppedNumbersOnColumns[idx] += isDropped;
+        }
     }
 }

@@ -12,7 +12,7 @@ public class Merger : MonoBehaviour
 
         if (board[(int)index.x, (int)index.y] == null)
         {
-            throw new ArgumentException("invalid arg");
+            throw new ArgumentException("invalid arg: " + index);
         }
 
         if (!CheckMergeableLeft(index) && !CheckMergeableRight(index) && !CheckMergeableBottom(index))
@@ -27,14 +27,12 @@ public class Merger : MonoBehaviour
         }
     }
 
-    public IEnumerator MergeNumber(Vector2 index, float time, bool isUseHammer = false)
+    public IEnumerator MergeNumber(Vector2 index, float time, bool isUseHammer = false, bool isBreakingAround = false)
     { 
-        if (isUseHammer)
+        if (isBreakingAround || isUseHammer)
             this.board = GameplayController.Instance.Board;
 
         yield return new WaitForSeconds(time);
-
-        Debug.Log(index);
 
         var nMergeCases = 0;
         var isBottomCase = false;
@@ -128,9 +126,8 @@ public class Merger : MonoBehaviour
         else
         {
             //base case
-            if (board[(int)index.x, (int)index.y] == GameplayController.Instance.CurrentDroppingNumber && !isUseHammer)
+            if ((board[(int)index.x, (int)index.y] == GameplayController.Instance.CurrentDroppingNumber && !isUseHammer) || isBreakingAround)
             {
-                Debug.Log("stop recursive here");
                 GameplayController.Instance.isDropping = false;
                 GameplayController.Instance.CurrentDroppingNumber = null;
                 StartCoroutine(GameplayController.Instance.Spawn(0f));

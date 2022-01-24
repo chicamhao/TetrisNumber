@@ -7,8 +7,8 @@ using System.Collections;
 
 public class Number : MonoBehaviour
 {
-    [SerializeField] private RectTransform rectTranform;
-    [SerializeField] private Button button;
+    [SerializeField] protected RectTransform rectTransform;
+    [SerializeField] protected Button button;
 
     public int currentDroppingColumn;
     public bool isDropped = false;
@@ -28,31 +28,36 @@ public class Number : MonoBehaviour
         button.onClick.AddListener(() => GameplayController.Instance.OnClickNumber(this));
     }
 
-    public void Setup(Transform parentTrans, Sprite[] sprites, int column, NumberType type)
+    public void Setup(Transform parentTrans, Sprite[] sprites, int column, NumberType type, bool isSpecial = false)
     {
-        this.sprites = sprites;
-
         GameplayController.Instance.isDropping = true;
-        transform.name = type.ToString();
-        numType = type;
         transform.SetParent(parentTrans);
-        GetComponent<Image>().sprite = sprites[(int)type];
-        currentDroppingColumn = column;
+
+        if (isSpecial)
+        {
+            GameplayController.Instance.isDroppingSpecialNumber = true;
+        }
+        else
+        {
+            this.sprites = sprites;
+            transform.name = type.ToString();
+            numType = type;
+            GetComponent<Image>().sprite = sprites[(int)type];
+            currentDroppingColumn = column;
+        }
     }
 
     // Update is called once per frame
-    void Update()
+    protected void Update()
     {
         if (!isDropped && !GameplayController.Instance.isUsingHammer)
         {
-            if (rectTranform.anchoredPosition.y > GameplayController.Instance.CurrentColumnHeights()[currentDroppingColumn])
+            if (rectTransform.anchoredPosition.y > GameplayController.Instance.CurrentColumnHeights()[currentDroppingColumn])
                 transform.position = transform.position + Configurations.NumberDroppingVelocity * Time.fixedDeltaTime;
             else
             {
-                rectTranform.anchoredPosition = new Vector2(rectTranform.anchoredPosition.x, GameplayController.Instance.CurrentColumnHeights()[currentDroppingColumn]);
+                rectTransform.anchoredPosition = new Vector2(rectTransform.anchoredPosition.x, GameplayController.Instance.CurrentColumnHeights()[currentDroppingColumn]);
                 isDropped = true;
-                GameplayController.Instance.isDropping = false;
-                GameplayController.Instance.currentDroppingNumber = null;
                 GameplayController.Instance.SetupForNextNumber(currentDroppingColumn);
             }
         }
@@ -60,7 +65,7 @@ public class Number : MonoBehaviour
 
     public void UpdateNumberAfterSwitch(int column, Vector2 pos)
     {
-        if (rectTranform.anchoredPosition.y < pos.y) return;
+        if (rectTransform.anchoredPosition.y < pos.y) return;
 
         if (column != currentDroppingColumn)
         {
@@ -72,16 +77,16 @@ public class Number : MonoBehaviour
         isDropped = true;
     }
     
-    private void MoveHorizontal(float x, float time)
+    protected void MoveHorizontal(float x, float time)
     {
         transform.DOMoveX(x, time);
     }
 
-    private IEnumerator Drop(float y, float time)
+    protected IEnumerator Drop(float y, float time)
     {
         yield return new WaitForSeconds(time);
 
-        var target = this.rectTranform;
+        var target = this.rectTransform;
         TweenerCore<Vector2, Vector2, VectorOptions> t = DOTween.To(() => target.anchoredPosition, x => target.anchoredPosition = x, new Vector2(0, y), 0.5f);
         t.SetOptions(AxisConstraint.Y).SetTarget(target);
     }
@@ -104,7 +109,7 @@ public class Number : MonoBehaviour
     public IEnumerator WaitForMoveRight()
     {
         yield return new WaitForSeconds(0.7f);
-        var target = this.rectTranform;
+        var target = this.rectTransform;
         TweenerCore<Vector2, Vector2, VectorOptions> t = DOTween.To(() => target.anchoredPosition, x => target.anchoredPosition = x, new Vector2(target.anchoredPosition.x + Configurations.NUMBER_SIZE, 0), 0.2f);
         t.SetOptions(AxisConstraint.X).SetTarget(target);
         yield return t.WaitForKill();
@@ -114,7 +119,7 @@ public class Number : MonoBehaviour
     public IEnumerator WaitForMoveLeft()
     {
         yield return new WaitForSeconds(0.7f);
-        var target = this.rectTranform;
+        var target = this.rectTransform;
         TweenerCore<Vector2, Vector2, VectorOptions> t = DOTween.To(() => target.anchoredPosition, x => target.anchoredPosition = x, new Vector2(target.anchoredPosition.x - Configurations.NUMBER_SIZE, 0), 0.2f);
         t.SetOptions(AxisConstraint.X).SetTarget(target);
         yield return t.WaitForKill();
@@ -123,23 +128,36 @@ public class Number : MonoBehaviour
 
     public void DropAUnit()
     {
-
         StartCoroutine(WaitForDropAUnit());
     }
+    public void Drop3Units()
+    {
+        StartCoroutine(WaitForDrop3Units());
+    }
+
 
     private IEnumerator WaitForDropAUnit()
     {
         yield return new WaitForSeconds(1f);
 
-        var target = this.rectTranform;
+        var target = this.rectTransform;
         TweenerCore<Vector2, Vector2, VectorOptions> t = DOTween.To(() => target.anchoredPosition, x => target.anchoredPosition = x, new Vector2(0, target.anchoredPosition.y - Configurations.NUMBER_SIZE), 0.2f);
+        t.SetOptions(AxisConstraint.Y).SetTarget(target);
+    }
+
+    private IEnumerator WaitForDrop3Units()
+    {
+        yield return new WaitForSeconds(1f);
+
+        var target = this.rectTransform;
+        TweenerCore<Vector2, Vector2, VectorOptions> t = DOTween.To(() => target.anchoredPosition, x => target.anchoredPosition = x, new Vector2(0, target.anchoredPosition.y - Configurations.NUMBER_SIZE * 3), 0.6f);
         t.SetOptions(AxisConstraint.Y).SetTarget(target);
     }
 
     public IEnumerator WaitForMoveTop()
     {
         yield return new WaitForSeconds(0.7f);
-        var target = this.rectTranform;
+        var target = this.rectTransform;
         TweenerCore<Vector2, Vector2, VectorOptions> t = DOTween.To(() => target.anchoredPosition, x => target.anchoredPosition = x, new Vector2(0, target.anchoredPosition.y + Configurations.NUMBER_SIZE), 0.2f);
         t.SetOptions(AxisConstraint.Y).SetTarget(target);
         yield return t.WaitForKill();
@@ -153,7 +171,7 @@ public class Number : MonoBehaviour
 
     public void SetRectPosition(float x, float y)
     {
-        rectTranform.anchoredPosition = new Vector2(x, y);
+        rectTransform.anchoredPosition = new Vector2(x, y);
     }
 
     private IEnumerator WaitForUpgrade(int n)

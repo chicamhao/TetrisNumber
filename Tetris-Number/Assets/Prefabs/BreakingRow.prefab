@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &2456766558238174071
+--- !u!1 &120278872702266539
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,25 +8,25 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 2456766558238174070}
-  - component: {fileID: 2456766558238174067}
-  - component: {fileID: 2456766558238174064}
-  - component: {fileID: 2456766558238174065}
-  - component: {fileID: 2509183783831801353}
+  - component: {fileID: 1004388973524332229}
+  - component: {fileID: 8415872510723704627}
+  - component: {fileID: 1955969627417075492}
+  - component: {fileID: 8987182517294903961}
+  - component: {fileID: 1252154477415447083}
   m_Layer: 5
-  m_Name: Number
+  m_Name: BreakingRow
   m_TagString: Number
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!224 &2456766558238174070
+--- !u!224 &1004388973524332229
 RectTransform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2456766558238174071}
+  m_GameObject: {fileID: 120278872702266539}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
@@ -39,35 +39,35 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 525}
   m_SizeDelta: {x: 212, y: 212}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!222 &2456766558238174067
+--- !u!222 &8415872510723704627
 CanvasRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2456766558238174071}
+  m_GameObject: {fileID: 120278872702266539}
   m_CullTransparentMesh: 1
---- !u!114 &2456766558238174064
+--- !u!114 &1955969627417075492
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2456766558238174071}
+  m_GameObject: {fileID: 120278872702266539}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 0.9811321, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 21300000, guid: 4ff3a24deaa42cb4ba2932517e196d1d, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -77,31 +77,13 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &2456766558238174065
+--- !u!114 &8987182517294903961
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2456766558238174071}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 66e57ad5e2643af41a45b3ec636c8ae6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  rectTransform: {fileID: 2456766558238174070}
-  button: {fileID: 2509183783831801353}
-  currentDroppingColumn: 0
-  isDropped: 0
-  index: {x: 0, y: 0}
-  numType: 0
---- !u!114 &2509183783831801353
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2456766558238174071}
+  m_GameObject: {fileID: 120278872702266539}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
@@ -135,7 +117,25 @@ MonoBehaviour:
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
   m_Interactable: 1
-  m_TargetGraphic: {fileID: 2456766558238174064}
+  m_TargetGraphic: {fileID: 1955969627417075492}
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &1252154477415447083
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 120278872702266539}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86fe14af154278041830216b7739d99b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rectTransform: {fileID: 1004388973524332229}
+  button: {fileID: 8987182517294903961}
+  currentDroppingColumn: 0
+  isDropped: 0
+  index: {x: 0, y: 0}
+  numType: 0

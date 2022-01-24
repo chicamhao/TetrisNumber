@@ -224,7 +224,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3043a31af8cf7684d876e9b0b2ef6b1d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  numberPrefab: {fileID: 2456766558238174065, guid: 94b7015543170e844b7a3ccdf1de6c1f, type: 3}
+  numberPrefab:
+  - {fileID: 2456766558238174065, guid: 94b7015543170e844b7a3ccdf1de6c1f, type: 3}
+  - {fileID: 6069483992628576497, guid: 5b4fa336c885b2e4e85f410605849759, type: 3}
+  - {fileID: 1252154477415447083, guid: 026b192d2602fa24e808ae953812f3bf, type: 3}
+  - {fileID: 7485636555504475588, guid: de1d1ce76f8e50b4bac44cb3c46b50fe, type: 3}
   sprites:
   - {fileID: 8236814533494187757, guid: c0c052c2681aff844a9f2cf403354e97, type: 3}
   - {fileID: 6341918590101960269, guid: c0c052c2681aff844a9f2cf403354e97, type: 3}
@@ -600,6 +604,7 @@ MonoBehaviour:
   hammer: {fileID: 707883187}
   isUsingHammer: 0
   isDropping: 0
+  isDroppingSpecialNumber: 0
   currentDroppingNumber: {fileID: 0}
 --- !u!114 &209054314
 MonoBehaviour:
