@@ -104,6 +104,9 @@ public class GameplayController : MonoBehaviour
             case SpecialNumberType.BreakingColumn:
                 BreakColumn(currentIdx);
                 break;
+            case SpecialNumberType.BreakingRow:
+                BreakRow(currentIdx);
+                break;
         }  
     }
 
@@ -186,13 +189,11 @@ public class GameplayController : MonoBehaviour
 
     public void BreakColumn(Vector2 index)
     {
-        Debug.Log(index);
         var x = (int)index.x;
         var y = (int)index.y;
 
         for (int i = 0; i < playground.droppedNumbersOnColumns[x]; ++i)
         {
-
             Destroy(board[x, i].gameObject, 1f);
         }
 
@@ -201,6 +202,50 @@ public class GameplayController : MonoBehaviour
         currentDroppingNumber = null;
         isDropping = false;
         StartCoroutine(Spawn(1f));
+    }
+
+    public void BreakRow(Vector2 index)
+    {
+        var x = (int)index.x;
+        var y = (int)index.y;
+
+        var idxes = new List<int>();
+        for (int i = 0; i < Configurations.NORMAL_BOARD_SIZE.x; ++i)
+        {
+            if (board[i, y] != null)
+            {
+                idxes.Add(i);
+                Destroy(board[i, y].gameObject, 1f);
+                playground.UpdateColumnHeight(i, -1);
+            }
+        }
+
+        bool isMergeable = false;
+
+        foreach(var i in idxes)
+        {
+            Debug.Log(i);
+            var upper = 1;
+            while (upper < Configurations.NORMAL_BOARD_SIZE.y && board[i, y + upper] != null)
+            {
+                isMergeable = true;
+                board[i, y + upper].DropAUnit();
+                board[i, y + upper - 1] = board[i, y + upper];
+                board[i, y + upper] = null;
+                StartCoroutine(merger.MergeNumber(new Vector2(i, y + upper - 1), .5f, false, true));
+
+                upper++;
+            }
+        }
+
+        Destroy(currentDroppingNumber.gameObject, 1f);
+
+        if (!isMergeable)
+        {
+            currentDroppingNumber = null;
+            isDropping = false;
+            StartCoroutine(Spawn(1f));
+        }
     }
 
     private bool CheckLose(int column)

@@ -68,7 +68,7 @@ public class NumberSpawner : MonoBehaviour
         if (s > currentMaximumSpawningNumber)
         {
             s = 0;
-            return currentMaximumSpawningNumber + (int)SpecialNumberType.BreakingColumn;
+            return currentMaximumSpawningNumber + (int)SpecialNumberType.BreakingRow;
         }
         s++;
 
