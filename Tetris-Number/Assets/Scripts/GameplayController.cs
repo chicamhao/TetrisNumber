@@ -15,6 +15,7 @@ public class GameplayController : MonoBehaviour
     
     public int nHammer = 0;
     public int nColourHammer = 0;
+    public HammerType currentHammerType;
 
     private static GameplayController instance;
 
@@ -371,25 +372,31 @@ public class GameplayController : MonoBehaviour
 
         if (!isUsingHammer) return;
 
-        var index = (-1, -1);
-        for (int i = 0; i < Configurations.NORMAL_BOARD_SIZE.x; i++)
+        if (currentHammerType == HammerType.Hammer)
         {
-            for (int j = 0; j < Configurations.NORMAL_BOARD_SIZE.y; j++)
+            var index = (-1, -1);
+            for (int i = 0; i < Configurations.NORMAL_BOARD_SIZE.x; i++)
             {
-                if ((board[i, j] != null && board[i,j] == number))
+                for (int j = 0; j < Configurations.NORMAL_BOARD_SIZE.y; j++)
                 {
-                    index = (i, j);
-                    break;
+                    if ((board[i, j] != null && board[i, j] == number))
+                    {
+                        index = (i, j);
+                        break;
+                    }
                 }
+                if (index != (-1, -1)) break;
             }
-            if (index != (-1, -1)) break;
+            Destroy(board[index.Item1, index.Item2].gameObject, .5f);
+            DropColumnHeight(index.Item1);
+            DropColumnAndMerge(new Vector2(index.Item1, index.Item2));
+            hammer.CancelHammer();
+            isUsingHammer = false;
+            isPause = false;
+        }else if (currentHammerType == HammerType.ColourHammer)
+        {
+            //multi-break here
         }
-        Destroy(board[index.Item1, index.Item2].gameObject, .5f);
-        DropColumnHeight(index.Item1);
-        DropColumnAndMerge(new Vector2(index.Item1, index.Item2));
-        hammer.CancelHammer();
-        isUsingHammer = false;
-        isPause = false;
     }
 
     private void DropColumnAndMerge(Vector2 index)

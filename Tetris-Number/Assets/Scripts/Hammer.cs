@@ -32,6 +32,7 @@ public class Hammer : MonoBehaviour
         {
             panel.DOAnchorPosY(panel.anchoredPosition.y - 200, 1f);
             GameplayController.Instance.IsUsingHammer = true;
+            GameplayController.Instance.currentHammerType = type;
         }
         else
         {
