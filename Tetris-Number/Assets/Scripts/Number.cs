@@ -4,6 +4,7 @@ using DG.Tweening;
 using DG.Tweening.Core;
 using DG.Tweening.Plugins.Options;
 using System.Collections;
+using System;
 
 public class Number : MonoBehaviour
 {
@@ -46,7 +47,7 @@ public class Number : MonoBehaviour
     // Update is called once per frame
     protected void Update()
     {
-        if (!isDropped && !GameplayController.Instance.isUsingHammer)
+        if (!isDropped && !GameplayController.Instance.IsPause)
         {
             if (rectTransform.anchoredPosition.y > GameplayController.Instance.CurrentColumnHeights()[currentDroppingColumn])
                 transform.position = transform.position + Configurations.NumberDroppingVelocity * Time.fixedDeltaTime;
@@ -175,7 +176,13 @@ public class Number : MonoBehaviour
         yield return new WaitForSeconds(1f);
 
         numType = (NumberType)(n + (int)numType);
+
         transform.name = numType.ToString();
+
+        var score = numType.ToString().Remove(0, 1);
+
+        GameplayController.Instance.AddScore(Int32.Parse(score) * n);
+
         GetComponent<Image>().sprite = sprites[(int)numType];
     }
 

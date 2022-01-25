@@ -5,7 +5,7 @@ using UniRx;
 public class Playground : MonoBehaviour
 {
     private Button[] columns;
-    public int[] droppedNumbersOnColumns = new int[(int)Configurations.NORMAL_BOARD_SIZE.y];
+    public int[] droppedNumbersOnColumns; 
 
     public Button[] Columns { get { return columns; } }
 
@@ -15,11 +15,18 @@ public class Playground : MonoBehaviour
     {
         columns = gameObject.GetComponentsInChildren<Button>();
 
-        //initilize columns height
+        //initilize columns 
+        Init();
+    }
+
+    public void Init()
+    {
         for (int i = 0; i < CurrentColumnHeights.Length; ++i)
         {
-            CurrentColumnHeights[i]= (((int)-Configurations.NORMAL_BOARD_SIZE.y * Configurations.NUMBER_SIZE) + Configurations.NUMBER_SIZE) / 2;
+            CurrentColumnHeights[i] = (((int)-Configurations.NORMAL_BOARD_SIZE.y * Configurations.NUMBER_SIZE) + Configurations.NUMBER_SIZE) / 2;
         }
+
+        droppedNumbersOnColumns = new int[(int)Configurations.NORMAL_BOARD_SIZE.y];
     }
     void Start()
     {

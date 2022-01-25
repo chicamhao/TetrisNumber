@@ -9,15 +9,41 @@ public class GameplayController : MonoBehaviour
     [SerializeField] private NumberSpawner numberSpawner;
     [SerializeField] private Playground playground;
     [SerializeField] private Merger merger;
-    [SerializeField] private Button save;
-    [SerializeField] private Button load;
     [SerializeField] private Hammer hammer;
+    [SerializeField] private Text scoreText;
+    [SerializeField] private ButtonController buttonController;
+    
+    public int nHammer = 0;
+    public int nColourHammer = 0;
 
     private static GameplayController instance;
+
+    private bool isPause;
     private Number[,] board;
-    public bool isUsingHammer = false;
+    private bool isUsingHammer = false;
+
+    private int score = 0;
+    private int coin = 0;
+
     public bool isDropping = false;
-    public Number currentDroppingNumber; 
+    public Number currentDroppingNumber;
+
+    public bool IsPause { get {return isPause; } } 
+    public bool IsUsingHammer { get { return isUsingHammer; } 
+        set 
+        {
+            if (value)
+            {
+                isPause = true;
+            }
+
+            isUsingHammer = value; 
+        } 
+    }
+
+    public int Score { get { return score; } }
+    public int Coin { get { return coin; } }
+
     public Number[,] Board { get { return board; } }
 
     public static GameplayController Instance
@@ -57,10 +83,7 @@ public class GameplayController : MonoBehaviour
     {
         instance = this;
 
-        board = new Number[(int)Configurations.NORMAL_BOARD_SIZE.y, (int)Configurations.NORMAL_BOARD_SIZE.y];
-        
-        save.onClick.AddListener(Save);
-        load.onClick.AddListener(Load);
+        board = new Number[(int)Configurations.NORMAL_BOARD_SIZE.y, (int)Configurations.NORMAL_BOARD_SIZE.y];        
         StartCoroutine(Spawn(0.5f));
     }
 
@@ -252,7 +275,8 @@ public class GameplayController : MonoBehaviour
     {
         if (playground.droppedNumbersOnColumns[column] == Configurations.NORMAL_BOARD_SIZE.y)
         {
-            Debug.Log("LOSE");
+            coin = (int)(score * Configurations.COIN_FER_SCORE);
+            buttonController.ShowDialog(DialogType.Result);
             return true;
         }
         return false;
@@ -263,7 +287,7 @@ public class GameplayController : MonoBehaviour
         playground.UpdateColumnHeight(column, -1);
     }
 
-    private void Save()
+    public void Save()
     {
         //save column's height
         for (int i = 0; i < Configurations.NORMAL_BOARD_SIZE.x; i++)
@@ -293,9 +317,11 @@ public class GameplayController : MonoBehaviour
                     PlayerPrefs.SetInt(key, -1);
             }
         }
+
+        PlayerPrefs.SetInt("score", score);
     }
 
-    private void Load()
+    public void Load()
     {
         ClearBoard();
 
@@ -308,6 +334,7 @@ public class GameplayController : MonoBehaviour
             playground.droppedNumbersOnColumns[i] = PlayerPrefs.GetInt(key);
         }
 
+        score = PlayerPrefs.GetInt("score");
         StartCoroutine(WaitingLoad());
     }
 
@@ -319,6 +346,8 @@ public class GameplayController : MonoBehaviour
 
         if (currentDroppingNumber)
             StartCoroutine(Spawn(.5f));
+
+        scoreText.text = score.ToString();
     }
 
     private void ClearBoard()
@@ -338,6 +367,8 @@ public class GameplayController : MonoBehaviour
 
     public void OnClickNumber(Number number)
     {
+        nHammer--;
+
         if (!isUsingHammer) return;
 
         var index = (-1, -1);
@@ -358,6 +389,7 @@ public class GameplayController : MonoBehaviour
         DropColumnAndMerge(new Vector2(index.Item1, index.Item2));
         hammer.CancelHammer();
         isUsingHammer = false;
+        isPause = false;
     }
 
     private void DropColumnAndMerge(Vector2 index)
@@ -381,6 +413,82 @@ public class GameplayController : MonoBehaviour
 
             //update topnumber for next loop
             topNumber = board[(int)index.x, (int)index.y + i];
+        }
+    }
+
+    public void Pause()
+    {
+        isPause = true;
+    }
+
+    public void Continue()
+    {
+        isPause = false;
+    }
+
+    public void Restart()
+    {
+        for (int i = 0; i < Configurations.NORMAL_BOARD_SIZE.x; i++)
+        {
+            for (int j = 0; j < Configurations.NORMAL_BOARD_SIZE.y; j++)
+            {
+                if ((board[i, j] != null))
+                {
+                    Destroy(board[i, j].gameObject, 0.5f);
+                }
+            }
+        }
+
+        playground.Init();
+        Destroy(currentDroppingNumber.gameObject, .5f);
+
+        board = new Number[(int)Configurations.NORMAL_BOARD_SIZE.y, (int)Configurations.NORMAL_BOARD_SIZE.y];
+        isDropping = false;
+        currentDroppingNumber = null;
+        score = 0;
+
+        StartCoroutine(Spawn(1f));
+    }
+
+    public void AddScore(int value)
+    {
+        score += value;
+        scoreText.text = score.ToString();
+    }
+
+    public void Buy(BuyType type)
+    {
+        
+        switch (type)
+        {
+            case BuyType.OneHammer:
+                if (coin > Configurations.ONE_HAMMER_PRICE)
+                {
+                    coin -= Configurations.ONE_HAMMER_PRICE;
+                    nHammer++;
+                }
+                break;
+            case BuyType.ThreeHammer:
+                if (coin > Configurations.THREE_HAMMER_PRICE)
+                {
+                    coin -= Configurations.THREE_HAMMER_PRICE;
+                    nHammer += 3;
+                }
+                break;
+            case BuyType.OneColourHammer:
+                if (coin > Configurations.ONE_COLOURHAMMER_PRICE)
+                {
+                    coin -= Configurations.ONE_COLOURHAMMER_PRICE;
+                    nColourHammer++;
+                }
+                break;
+            case BuyType.ThreeColourHammer:
+                if (coin > Configurations.THREE_COLOURHAMMER_PRICE)
+                {
+                    coin -= Configurations.THREE_COLOURHAMMER_PRICE;
+                    nColourHammer += 3;
+                }
+                break;
         }
     }
 }
