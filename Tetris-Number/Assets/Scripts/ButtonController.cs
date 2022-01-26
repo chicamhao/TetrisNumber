@@ -49,6 +49,11 @@ public class ButtonController : MonoBehaviour
             case DialogType.Result:
                 resultDialog.Show();
                 break;
+            case DialogType.Shop:
+                shopDialog.Show();
+                break;
+            default:
+                break;
         }
     }
 }

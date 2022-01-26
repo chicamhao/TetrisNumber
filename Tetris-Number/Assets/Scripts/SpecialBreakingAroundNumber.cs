@@ -1,3 +1,0 @@
-
-public class SpecialBreakingAroundNumber : Number
-{}

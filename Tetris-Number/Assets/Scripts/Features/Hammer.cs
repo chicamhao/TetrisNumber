@@ -43,7 +43,6 @@ public class Hammer : MonoBehaviour
         isUsed = !isUsed;
     }
 
-
     public void CancelHammer()
     {
         panel.DOAnchorPosY(panel.anchoredPosition.y + 200, 1f);
