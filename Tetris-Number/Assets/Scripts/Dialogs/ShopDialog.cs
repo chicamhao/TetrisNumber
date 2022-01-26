@@ -17,7 +17,6 @@ public class ShopDialog : DialogBase
 
     private void Start()
     {
-        buttons = GetComponentsInChildren<Button>();
         buttons[0].onClick.AddListener(() => GameplayController.Instance.Buy(BuyType.OneHammer));
         buttons[1].onClick.AddListener(() => GameplayController.Instance.Buy(BuyType.ThreeHammer));
         buttons[2].onClick.AddListener(() => GameplayController.Instance.Buy(BuyType.OneColourHammer));

@@ -38,6 +38,8 @@ public class ButtonController : MonoBehaviour
 
     void Start()
     {
+        instance = this;
+
         pause.onClick.AddListener(() => pauseDialog.Show());
         shop.onClick.AddListener(() => shopDialog.Show());
     }

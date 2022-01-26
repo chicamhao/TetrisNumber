@@ -46,9 +46,8 @@ public class NumberSpawner : MonoBehaviour
     {
         columns = GameplayController.Instance.Columns();
         var rand = Random.Range(0, columns.Length - 1);
-        var type = (NumberType)RandomNumber();
+        var type = (NumberType)HighLevelRandomNumber();
         //var type = (NumberType)SpawningNumberTest();
-        Debug.Log((int)type);
         Number number;
         if ((int)type > currentMaximumSpawningNumber)
         {
@@ -72,7 +71,7 @@ public class NumberSpawner : MonoBehaviour
 
     public int HighLevelRandomNumber()
     {
-        float rand = Random.Range(0, 1);
+        float rand = Random.Range(0f, 1f);
         var result = 0;
 
         if (rand < Configurations.SPECIAL_NUMBER_RATIO)

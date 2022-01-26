@@ -6,18 +6,17 @@ using System;
 
 public class GameplayController : MonoBehaviour
 {
-
     [SerializeField] private NumberSpawner numberSpawner;
     [SerializeField] private Playground playground;
     [SerializeField] private Merger merger;
     [SerializeField] private Hammer hammer;
-    [SerializeField] private ButtonController buttonController;
+    [SerializeField] private ColourHammer colourHammer;
     [SerializeField] private TextUpdater texter;
 
     private static GameplayController instance;
 
-    public int nHammer = 0;
-    public int nColourHammer = 0;
+    public int nHammer;
+    public int nColourHammer;
     public HammerType currentHammerType;
 
     private bool isPause;
@@ -27,12 +26,31 @@ public class GameplayController : MonoBehaviour
     private Number[,] board;
     public Number currentDroppingNumber;
 
+    private int highScore;
+
+    [SerializeField] private Text hammerText;
+    [SerializeField] private Text colourHammerText;
+
     private void Start()
     {
         instance = this;
-
         board = new Number[(int)Configurations.NORMAL_BOARD_SIZE.y, (int)Configurations.NORMAL_BOARD_SIZE.y];        
         StartCoroutine(Spawn(0.5f));
+
+        coin = PlayerPrefs.GetInt("coin");
+        highScore = PlayerPrefs.GetInt("high_score");
+        nHammer = PlayerPrefs.GetInt("hammer");
+        nColourHammer = PlayerPrefs.GetInt("colour_hammer");
+
+        //for testing
+        nColourHammer = 3;
+        nHammer = 3;
+
+        hammerText.text = nHammer.ToString();
+        colourHammerText.text = nColourHammer.ToString();
+
+        texter.UpdateCoin(coin);
+        texter.UpdateHighScore(highScore);
     } 
 
     public IEnumerator Spawn(float time)
@@ -69,7 +87,18 @@ public class GameplayController : MonoBehaviour
 
                 if (CheckLose(droppedColumn))
                 {
-                    Time.timeScale = 0f;
+
+                    coin += (int)(score * Configurations.COIN_FER_SCORE);
+                    texter.UpdateCoin(coin);
+
+                    if (score > highScore)
+                    {
+                        highScore = score;
+                        texter.UpdateHighScore(highScore);
+                        PlayerPrefs.SetInt("high_score", highScore);
+                    }
+
+                    ButtonController.Instance.ShowDialog(DialogType.Result);
                     return;
                 }
                 break;
@@ -96,7 +125,7 @@ public class GameplayController : MonoBehaviour
         var rightVerticalBreakingNumber = 0;
         var bottomBreakingNumber = 0;
 
-        int score = 0;
+        var score = 0;
         for (int i = -1; i <= 1; ++i)
         {
             if (index.x - 1 >= 0 && index.y + i >= 0 && index.y + i < Configurations.NORMAL_BOARD_SIZE.y && board[(int)index.x - 1, (int)index.y + i] != null)
@@ -184,6 +213,7 @@ public class GameplayController : MonoBehaviour
         var x = (int)index.x;
         var y = (int)index.y;
         var score = 0;
+
         for (int i = 0; i < playground.droppedNumbersOnColumns[x]; ++i)
         {
             var type = board[x, i].gameObject.name;
@@ -207,6 +237,8 @@ public class GameplayController : MonoBehaviour
         var y = (int)index.y;
 
         var idxes = new List<int>();
+        var score = 0;
+
         for (int i = 0; i < Configurations.NORMAL_BOARD_SIZE.x; ++i)
         {
             if (board[i, y] != null)
@@ -253,8 +285,6 @@ public class GameplayController : MonoBehaviour
     {
         if (playground.droppedNumbersOnColumns[column] == Configurations.NORMAL_BOARD_SIZE.y)
         {
-            coin += (int)(score * Configurations.COIN_FER_SCORE);
-            buttonController.ShowDialog(DialogType.Result);
             return true;
         }
         return false;
@@ -318,7 +348,7 @@ public class GameplayController : MonoBehaviour
 
     private IEnumerator WaitingLoad()
     {
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(0.5f);
 
         numberSpawner.Load(playground.Columns, board);
 
@@ -345,12 +375,13 @@ public class GameplayController : MonoBehaviour
 
     public void OnClickNumber(Number number)
     {
-        nHammer--;
-
         if (!isUsingHammer) return;
 
         if (currentHammerType == HammerType.Hammer)
         {
+            nHammer--;
+            hammerText.text = nHammer.ToString();
+
             var index = (-1, -1);
             for (int i = 0; i < Configurations.NORMAL_BOARD_SIZE.x; i++)
             {
@@ -373,7 +404,47 @@ public class GameplayController : MonoBehaviour
         }
         else if (currentHammerType == HammerType.ColourHammer)
         {
-            //multi-break here
+            Debug.Log("dsda");
+            nColourHammer--;
+            colourHammerText.text = nColourHammer.ToString();
+            colourHammer.CancelHammer();
+            isUsingHammer = false;
+            isPause = false;
+
+            var index = (-1, -1);
+            for (int i = 0; i < Configurations.NORMAL_BOARD_SIZE.x; i++)
+            {
+                for (int j = 0; j < Configurations.NORMAL_BOARD_SIZE.y; j++)
+                {
+                    if ((board[i, j] != null && board[i, j] == number))
+                    {
+                        index = (i, j);
+                        break;
+                    }
+                }
+                if (index != (-1, -1)) break;
+            }
+
+            var list = new List<(int, int)>();
+            for (int i = 0; i < Configurations.NORMAL_BOARD_SIZE.x; i++)
+            {
+                for (int j = 0; j < Configurations.NORMAL_BOARD_SIZE.y; j++)
+                {
+                    if ((board[i, j] != null && board[index.Item1, index.Item2].numType == board[i, j].numType))
+                    {
+                        list.Add((i, j));
+                        Destroy(board[i, j].gameObject, .5f);
+                    }
+                }
+            }
+
+            Destroy(board[index.Item1, index.Item2].gameObject, .5f);
+
+            foreach (var i in list)
+            {
+                DropColumnHeight(i.Item1);
+                DropColumnAndMerge(new Vector2(i.Item1, i.Item2));
+            }
         }
     }
 
@@ -437,7 +508,6 @@ public class GameplayController : MonoBehaviour
 
     public void AddScore(int value)
     {
-        Debug.Log(value);
         score += value;
     }
 
@@ -474,13 +544,16 @@ public class GameplayController : MonoBehaviour
                 }
                 break;
         }
+
+        hammerText.text = nHammer.ToString();
+        colourHammerText.text = nColourHammer.ToString();
     }
 
 
     /*
      * properties
      */
-    public bool IsPause { get { return isPause; } }
+    public bool IsPause { get { return isPause; } set { isPause = value; } }
     public bool IsUsingHammer
     {
         get { return isUsingHammer; }
@@ -533,5 +606,14 @@ public class GameplayController : MonoBehaviour
     public Button[] Columns()
     {
         return playground.Columns;
+    }
+
+    public void OnDestroy()
+    {
+        Debug.Log("destroy call");
+        PlayerPrefs.SetInt("coin", coin);
+        PlayerPrefs.GetInt("high_score", highScore);
+        PlayerPrefs.GetInt("hammer", nHammer);
+        PlayerPrefs.GetInt("colour_hammer", nColourHammer);
     }
 }

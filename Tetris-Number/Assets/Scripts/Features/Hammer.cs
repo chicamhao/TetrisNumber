@@ -23,24 +23,27 @@ public class Hammer : MonoBehaviour
 
     protected void HammerHandle()
     {
-        if (GameplayController.Instance.nHammer == 0)
+        Debug.Log(GameplayController.Instance.nHammer);
+        if ((GameplayController.Instance.nHammer == 0 && type == HammerType.Hammer) || (GameplayController.Instance.nColourHammer == 0 && type == HammerType.ColourHammer))
         {
             ButtonController.Instance.ShowDialog(DialogType.Shop);
         }
-
-        if (!isUsed)
-        {
-            panel.DOAnchorPosY(panel.anchoredPosition.y - 200, 1f);
-            GameplayController.Instance.IsUsingHammer = true;
-            GameplayController.Instance.currentHammerType = type;
-        }
         else
         {
-            CancelHammer();
-            GameplayController.Instance.IsUsingHammer = false;
+            if (!isUsed)
+            {
+                panel.DOAnchorPosY(panel.anchoredPosition.y - 200, 1f);
+                GameplayController.Instance.IsUsingHammer = true;
+                GameplayController.Instance.currentHammerType = type;
+                isUsed = !isUsed;
+            }
+            else
+            {
+                CancelHammer();
+                GameplayController.Instance.IsUsingHammer = false;
+                GameplayController.Instance.IsPause = false;
+            }
         }
-
-        isUsed = !isUsed;
     }
 
     public void CancelHammer()

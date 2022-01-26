@@ -12,16 +12,19 @@ public class ResultDialog : DialogBase
 
     private void Start()
     {
-        restart.onClick.AddListener(() => GameplayController.Instance.Restart());
+        restart.onClick.AddListener(() => 
+        {
+            GameplayController.Instance.Restart();
+            Hide();
+        });
         menu.onClick.AddListener(() => SceneManager.LoadScene("MenuScene"));
     }
     protected override void HideBehaviour()
     {
-        scoreText.text =  GameplayController.Instance.Score.ToString();
     }   
 
     protected override void ShowBehaviour()
     {
-        
+        scoreText.text = GameplayController.Instance.Score.ToString();
     }
 }

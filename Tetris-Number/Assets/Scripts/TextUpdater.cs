@@ -26,4 +26,9 @@ public class TextUpdater : MonoBehaviour
     {
         this.coin.text = coin.ToString();
     }
+
+    public void UpdateHighScore(int highscore)
+    {
+        this.highScore.text = highScore.ToString();
+    }
 }

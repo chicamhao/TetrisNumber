@@ -2,7 +2,14 @@ using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
 
-public abstract class DialogBase : MonoBehaviour
+
+public interface IDialogBase
+{
+    public void Show();
+    public void Hide();
+}
+
+public abstract class DialogBase : MonoBehaviour, IDialogBase
 {
     [SerializeField] Button close;
     [SerializeField] RectTransform rectTransform;
@@ -30,4 +37,5 @@ public abstract class DialogBase : MonoBehaviour
         GameplayController.Instance.Continue();
         HideBehaviour();
     }
+
 }
