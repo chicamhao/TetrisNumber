@@ -130,7 +130,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 120278872702266539}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 86fe14af154278041830216b7739d99b, type: 3}
+  m_Script: {fileID: 11500000, guid: 86e5eaf5fbb20af4889124619c325960, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   rectTransform: {fileID: 1004388973524332229}
@@ -139,4 +139,4 @@ MonoBehaviour:
   isDropped: 0
   index: {x: 0, y: 0}
   numType: 0
-  specType: 2
+  specialType: 0

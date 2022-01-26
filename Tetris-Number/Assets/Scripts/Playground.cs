@@ -31,48 +31,22 @@ public class Playground : MonoBehaviour
     void Start()
     {
         //add button listener streams, subcribes to switch current number to another branch
-        columns[0].OnClickAsObservable()
-        .Subscribe(_ =>
-        {
-            GameplayController.Instance.SwitchColumn(0);
-        })
-        .AddTo(this);
-
-        columns[1].OnClickAsObservable()
-            .Subscribe(_ =>
-            {
-                GameplayController.Instance.SwitchColumn(1);
-            })
-            .AddTo(this);
-
-        columns[2].OnClickAsObservable()
-            .Subscribe(_ =>
-            {
-                GameplayController.Instance.SwitchColumn(2);
-            })
-            .AddTo(this);
-
-        columns[3].OnClickAsObservable()
-            .Subscribe(_ =>
-            {
-                GameplayController.Instance.SwitchColumn(3);
-            })
-            .AddTo(this);
-
-        columns[4].OnClickAsObservable()
-            .Subscribe(_ =>
-            {
-                GameplayController.Instance.SwitchColumn(4);
-            })
-            .AddTo(this);
+        columns[0].onClick.AddListener(() => GameplayController.Instance.SwitchColumn(0));
+        columns[1].onClick.AddListener(() => GameplayController.Instance.SwitchColumn(1));
+        columns[2].onClick.AddListener(() => GameplayController.Instance.SwitchColumn(2));
+        columns[3].onClick.AddListener(() => GameplayController.Instance.SwitchColumn(3));
+        columns[4].onClick.AddListener(() => GameplayController.Instance.SwitchColumn(4));
     }
 
     public void UpdateColumnHeight(int idx, int isDropped)
     {
         if (idx >= 0 && idx < Configurations.NORMAL_BOARD_SIZE.x)
-        {
+        {      
             CurrentColumnHeights[idx] += (isDropped) * Configurations.NUMBER_SIZE;
             droppedNumbersOnColumns[idx] += isDropped;
+
+            if (droppedNumbersOnColumns[idx] < 0)
+                droppedNumbersOnColumns[idx] = 0;
         }
     }
 }

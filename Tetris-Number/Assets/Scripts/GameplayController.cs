@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
+using System;
 
 public class GameplayController : MonoBehaviour
 {
@@ -38,7 +39,11 @@ public class GameplayController : MonoBehaviour
     {
         yield return new WaitForSeconds(time);
         if (currentDroppingNumber == null && !isDropping)
+        {
+            texter.UpdateScore(score);
             numberSpawner.Spawn();
+        }
+
     }
 
     public void SwitchColumn(int column)
@@ -90,16 +95,28 @@ public class GameplayController : MonoBehaviour
         var leftVerticalBreakingNumber = 0;
         var rightVerticalBreakingNumber = 0;
         var bottomBreakingNumber = 0;
+
+        int score = 0;
         for (int i = -1; i <= 1; ++i)
         {
             if (index.x - 1 >= 0 && index.y + i >= 0 && index.y + i < Configurations.NORMAL_BOARD_SIZE.y && board[(int)index.x - 1, (int)index.y + i] != null)
             {
                 leftVerticalBreakingNumber++;
+
+                var type = board[(int)index.x - 1, (int)index.y + i].gameObject.name;
+                type = type.Remove(0, 1);
+                Debug.Log(type);
+                score += Int32.Parse(type);
+
                 destroyNumbers.Add(board[(int)index.x - 1, (int)index.y + i]);
             }
 
             if (index.x + 1 < Configurations.NORMAL_BOARD_SIZE.x && index.y + i >= 0 && index.y + i < Configurations.NORMAL_BOARD_SIZE.y && board[(int)index.x + 1, (int)index.y + i] != null)
             {
+                var type = board[(int)index.x + 1, (int)index.y + i].gameObject.name;
+                type = type.Remove(0, 1);
+                score += Int32.Parse(type);
+
                 rightVerticalBreakingNumber++;
                 destroyNumbers.Add(board[(int)index.x + 1, (int)index.y + i]);
             }
@@ -107,6 +124,10 @@ public class GameplayController : MonoBehaviour
 
         if (index.y - 1 >= 0 && board[(int)index.x, (int)index.y - 1] != null)
         {
+            var type = board[(int)index.x, (int)index.y - 1].gameObject.name;
+            type = type.Remove(0, 1);
+            score += Int32.Parse(type);
+
             bottomBreakingNumber++;
             destroyNumbers.Add(board[(int)index.x, (int)index.y - 1]);
         }
@@ -147,6 +168,7 @@ public class GameplayController : MonoBehaviour
             }
         }
 
+        AddScore(score);
         Destroy(currentDroppingNumber.gameObject, 1f);
 
         if (!isMergeable)
@@ -161,12 +183,17 @@ public class GameplayController : MonoBehaviour
     {
         var x = (int)index.x;
         var y = (int)index.y;
-
+        var score = 0;
         for (int i = 0; i < playground.droppedNumbersOnColumns[x]; ++i)
         {
+            var type = board[x, i].gameObject.name;
+            type = type.Remove(0, 1);
+            score += Int32.Parse(type);
+
             Destroy(board[x, i].gameObject, 1f);
         }
 
+        AddScore(score);
         Destroy(currentDroppingNumber.gameObject, 1f);
         playground.UpdateColumnHeight(x , -playground.droppedNumbersOnColumns[x]);
         currentDroppingNumber = null;
@@ -184,6 +211,10 @@ public class GameplayController : MonoBehaviour
         {
             if (board[i, y] != null)
             {
+                var type = board[i, y].gameObject.name;
+                type = type.Remove(0, 1);
+                score += Int32.Parse(type);
+
                 idxes.Add(i);
                 Destroy(board[i, y].gameObject, 1f);
                 playground.UpdateColumnHeight(i, -1);
@@ -194,7 +225,6 @@ public class GameplayController : MonoBehaviour
 
         foreach(var i in idxes)
         {
-            Debug.Log(i);
             var upper = 1;
             while (upper < Configurations.NORMAL_BOARD_SIZE.y && board[i, y + upper] != null)
             {
@@ -208,6 +238,7 @@ public class GameplayController : MonoBehaviour
             }
         }
 
+        AddScore(score);
         Destroy(currentDroppingNumber.gameObject, 1f);
 
         if (!isMergeable)
@@ -222,7 +253,7 @@ public class GameplayController : MonoBehaviour
     {
         if (playground.droppedNumbersOnColumns[column] == Configurations.NORMAL_BOARD_SIZE.y)
         {
-            coin = (int)(score * Configurations.COIN_FER_SCORE);
+            coin += (int)(score * Configurations.COIN_FER_SCORE);
             buttonController.ShowDialog(DialogType.Result);
             return true;
         }
@@ -406,8 +437,8 @@ public class GameplayController : MonoBehaviour
 
     public void AddScore(int value)
     {
+        Debug.Log(value);
         score += value;
-        texter.UpdateScore(score);
     }
 
     public void Buy(BuyType type)

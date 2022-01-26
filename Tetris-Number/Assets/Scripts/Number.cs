@@ -54,7 +54,7 @@ public class Number : MonoBehaviour
         if (!isDropped && !GameplayController.Instance.IsPause)
         {
             if (rectTransform.anchoredPosition.y > GameplayController.Instance.CurrentColumnHeights()[currentDroppingColumn])
-                transform.position = transform.position + Configurations.NumberDroppingVelocity * Time.fixedDeltaTime;
+                transform.position = transform.position + Configurations.DROPPING_VELOCITY * Time.fixedDeltaTime;
             else
             {
                 rectTransform.anchoredPosition = new Vector2(rectTransform.anchoredPosition.x, GameplayController.Instance.CurrentColumnHeights()[currentDroppingColumn]);
@@ -185,7 +185,7 @@ public class Number : MonoBehaviour
 
         var score = numType.ToString().Remove(0, 1);
 
-        GameplayController.Instance.AddScore(Int32.Parse(score) * n);
+        GameplayController.Instance.AddScore(Int32.Parse(score) + (int)Mathf.Pow(2, n - 1));
 
         GetComponent<Image>().sprite = sprites[(int)numType];
     }

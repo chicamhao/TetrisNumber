@@ -52,12 +52,10 @@ public class NumberSpawner : MonoBehaviour
         Number number;
         if ((int)type > currentMaximumSpawningNumber)
         {
-            Debug.Log("hahaha");
             number = Instantiate(numberPrefab[(int)type - currentMaximumSpawningNumber], columns[rand].transform);
         }
         else
         {
-            Debug.Log("hihhihi");
             number = Instantiate(numberPrefab[0], columns[rand].transform);
         }
         
@@ -65,10 +63,24 @@ public class NumberSpawner : MonoBehaviour
         GameplayController.Instance.CurrentDroppingNumber = number;
     }
 
+    //demo random
     public int RandomNumber()
     {
-        var rand = Random.Range((int)NumberType.N2, currentMaximumSpawningNumber + (int)SpecialNumberType.BreakingColumn);
+        var rand = Random.Range((int)NumberType.N2, currentMaximumSpawningNumber + (int)SpecialNumberType.BreakingColumn + 1);
         return rand;
+    }
+
+    public int HighLevelRandomNumber()
+    {
+        float rand = Random.Range(0, 1);
+        var result = 0;
+
+        if (rand < Configurations.SPECIAL_NUMBER_RATIO)
+            result = Random.Range(currentMaximumSpawningNumber, currentMaximumSpawningNumber + (int)SpecialNumberType.BreakingColumn);
+        else
+            result = Random.Range((int)NumberType.N2, currentMaximumSpawningNumber);
+
+        return result;
     }
 
     //remove after test
