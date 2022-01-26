@@ -10,75 +10,21 @@ public class GameplayController : MonoBehaviour
     [SerializeField] private Playground playground;
     [SerializeField] private Merger merger;
     [SerializeField] private Hammer hammer;
-    [SerializeField] private Text scoreText;
     [SerializeField] private ButtonController buttonController;
-    
+    [SerializeField] private TextUpdater texter;
+
+    private static GameplayController instance;
+
     public int nHammer = 0;
     public int nColourHammer = 0;
     public HammerType currentHammerType;
 
-    private static GameplayController instance;
-
     private bool isPause;
-    private Number[,] board;
     private bool isUsingHammer = false;
-
-    private int score = 0;
-    private int coin = 0;
-
     public bool isDropping = false;
+
+    private Number[,] board;
     public Number currentDroppingNumber;
-
-    public bool IsPause { get {return isPause; } } 
-    public bool IsUsingHammer { get { return isUsingHammer; } 
-        set 
-        {
-            if (value)
-            {
-                isPause = true;
-            }
-
-            isUsingHammer = value; 
-        } 
-    }
-
-    public int Score { get { return score; } }
-    public int Coin { get { return coin; } }
-
-    public Number[,] Board { get { return board; } }
-
-    public static GameplayController Instance
-    {
-        get
-        {
-            if (instance != null)
-            {
-                return instance;
-            }
-            else
-            {
-                UnityEngine.Debug.LogWarning("Attempt to intialize a second singleton instance!");
-                instance = new GameplayController();
-                return instance;
-            }
-        }
-    }
-
-    public Number CurrentDroppingNumber
-    {
-        get { return currentDroppingNumber; }
-        set { currentDroppingNumber = value; }
-    } 
-
-    public int[] CurrentColumnHeights()
-    {
-        return playground.CurrentColumnHeights;
-    }
-
-    public Button[] Columns()
-    {
-        return playground.Columns;
-    }
 
     private void Start()
     {
@@ -86,7 +32,7 @@ public class GameplayController : MonoBehaviour
 
         board = new Number[(int)Configurations.NORMAL_BOARD_SIZE.y, (int)Configurations.NORMAL_BOARD_SIZE.y];        
         StartCoroutine(Spawn(0.5f));
-    }
+    } 
 
     public IEnumerator Spawn(float time)
     {
@@ -109,7 +55,7 @@ public class GameplayController : MonoBehaviour
     {
         var currentIdx = new Vector2(droppedColumn, playground.droppedNumbersOnColumns[droppedColumn]);
 
-        switch (currentDroppingNumber.specType)
+        switch (currentDroppingNumber.specialType)
         {
             case SpecialNumberType.None:
                 board[(int)currentIdx.x, (int)currentIdx.y] = currentDroppingNumber;
@@ -348,7 +294,7 @@ public class GameplayController : MonoBehaviour
         if (currentDroppingNumber)
             StartCoroutine(Spawn(.5f));
 
-        scoreText.text = score.ToString();
+        texter.UpdateScore(score);
     }
 
     private void ClearBoard()
@@ -393,7 +339,8 @@ public class GameplayController : MonoBehaviour
             hammer.CancelHammer();
             isUsingHammer = false;
             isPause = false;
-        }else if (currentHammerType == HammerType.ColourHammer)
+        }
+        else if (currentHammerType == HammerType.ColourHammer)
         {
             //multi-break here
         }
@@ -460,12 +407,11 @@ public class GameplayController : MonoBehaviour
     public void AddScore(int value)
     {
         score += value;
-        scoreText.text = score.ToString();
+        texter.UpdateScore(score);
     }
 
     public void Buy(BuyType type)
-    {
-        
+    {      
         switch (type)
         {
             case BuyType.OneHammer:
@@ -497,5 +443,64 @@ public class GameplayController : MonoBehaviour
                 }
                 break;
         }
+    }
+
+
+    /*
+     * properties
+     */
+    public bool IsPause { get { return isPause; } }
+    public bool IsUsingHammer
+    {
+        get { return isUsingHammer; }
+        set
+        {
+            if (value)
+            {
+                isPause = true;
+            }
+
+            isUsingHammer = value;
+        }
+    }
+
+    private int score = 0;
+    private int coin = 0;
+    public int Score { get { return score; } }
+    public int Coin { get { return coin; } }
+
+    public Number[,] Board { get { return board; } }
+
+    public static GameplayController Instance
+    {
+        get
+        {
+            if (instance != null)
+            {
+                return instance;
+            }
+            else
+            {
+                UnityEngine.Debug.LogWarning("Attempt to intialize a second singleton instance!");
+                instance = new GameplayController();
+                return instance;
+            }
+        }
+    }
+
+    public Number CurrentDroppingNumber
+    {
+        get { return currentDroppingNumber; }
+        set { currentDroppingNumber = value; }
+    }
+
+    public int[] CurrentColumnHeights()
+    {
+        return playground.CurrentColumnHeights;
+    }
+
+    public Button[] Columns()
+    {
+        return playground.Columns;
     }
 }
