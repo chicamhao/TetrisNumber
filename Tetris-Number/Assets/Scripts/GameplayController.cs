@@ -47,12 +47,13 @@ public class GameplayController : MonoBehaviour
         nColourHammer = PlayerPrefs.GetInt("colour_hammer");
 
         //for testing
+        coin = 1000;
         nColourHammer = 3;
         nHammer = 3;
 
         hammerText.text = nHammer.ToString();
         colourHammerText.text = nColourHammer.ToString();
-
+        
         texter.UpdateCoin(coin);
         texter.UpdateHighScore(highScore);
 
@@ -359,6 +360,7 @@ public class GameplayController : MonoBehaviour
         }
 
         score = PlayerPrefs.GetInt("score");
+
         StartCoroutine(WaitingLoad());
     }
 
@@ -563,9 +565,10 @@ public class GameplayController : MonoBehaviour
 
         hammerText.text = nHammer.ToString();
         colourHammerText.text = nColourHammer.ToString();
+        texter.UpdateCoin(coin);
     }
 
-     IEnumerator PlayHammerAudio()
+    IEnumerator PlayHammerAudio()
      {
         yield return new WaitForSeconds(.01f);
         hammerAudio.Play();
@@ -634,7 +637,6 @@ public class GameplayController : MonoBehaviour
 
     public void OnDestroy()
     {
-        Debug.Log("destroy call");
         PlayerPrefs.SetInt("coin", coin);
         PlayerPrefs.GetInt("high_score", highScore);
         PlayerPrefs.GetInt("hammer", nHammer);

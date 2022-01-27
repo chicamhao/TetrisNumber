@@ -22,7 +22,8 @@ public class MenuGame : MonoBehaviour
         settings.onClick.AddListener(() => dialog.Show());
         load.onClick.AddListener(() =>
         {
-            Configurations.IS_LOAD = true; 
+            Configurations.IS_LOAD = true;
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
         });
     }
 
