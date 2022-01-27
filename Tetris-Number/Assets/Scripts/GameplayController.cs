@@ -51,6 +51,12 @@ public class GameplayController : MonoBehaviour
 
         texter.UpdateCoin(coin);
         texter.UpdateHighScore(highScore);
+
+        if (Configurations.IS_LOAD)
+        {
+            Load();
+            Configurations.IS_LOAD = false;
+        }
     } 
 
     public IEnumerator Spawn(float time)

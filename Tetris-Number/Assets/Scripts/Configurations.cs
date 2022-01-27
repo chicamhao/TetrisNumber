@@ -3,8 +3,8 @@ using UnityEngine;
 public static class Configurations 
 {
     public static int NUMBER_SIZE = 200;
-
-    public static Vector3 DROPPING_VELOCITY = new Vector3(0f, -.5f, 0f);
+    public static bool IS_LOAD = false;
+    public static Vector3 DROPPING_VELOCITY = new Vector3(0f, -.05f, 0f);
     public static Vector2 NORMAL_BOARD_SIZE = new Vector2(5, 6);
 
 
