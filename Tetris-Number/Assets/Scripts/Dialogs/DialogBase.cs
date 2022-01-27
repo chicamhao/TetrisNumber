@@ -27,12 +27,14 @@ public abstract class DialogBase : MonoBehaviour, IDialogBase
     public void Show()
     {
         ShowBehaviour();
+        GameplayController.Instance.PlayClickAudio();
         rectTransform.DOAnchorPosY(0, 1f);
         GameplayController.Instance.Pause();
     }
 
     public void Hide()
     {
+        GameplayController.Instance.PlayClickAudio();
         rectTransform.DOAnchorPosY(initPosition.y, 1f);
         GameplayController.Instance.Continue();
         HideBehaviour();

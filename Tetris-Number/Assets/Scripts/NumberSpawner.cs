@@ -112,7 +112,7 @@ public class NumberSpawner : MonoBehaviour
                 var number = Instantiate(numberPrefab[0], columns[i].transform);
                 var type = (NumberType)PlayerPrefs.GetInt((i, j).ToString());
                 number.Setup(this.transform, sprites, j, type);
-                var verPos = -((int)Configurations.NORMAL_BOARD_SIZE.x / 2 * Configurations.NUMBER_SIZE) - 10 + (i * (Configurations.NUMBER_SIZE + 5));
+                var verPos = -((int)Configurations.NORMAL_BOARD_SIZE.x / 2 * Configurations.NUMBER_SIZE) + (i * (Configurations.NUMBER_SIZE));
                 var horPos = -((int)Configurations.NORMAL_BOARD_SIZE.y / 2 * Configurations.NUMBER_SIZE - Configurations.NUMBER_SIZE/2)  + (j * (Configurations.NUMBER_SIZE));
                 number.SetRectPosition(verPos, horPos);
                 number.isDropped = true; 

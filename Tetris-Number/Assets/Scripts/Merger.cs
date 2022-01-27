@@ -6,6 +6,7 @@ public class Merger : MonoBehaviour
 {
     Number[,] board;
 
+    public AudioSource mergeAudio;
     public void MergeNumber(Vector2 index)
     {
         this.board = GameplayController.Instance.Board;
@@ -114,11 +115,13 @@ public class Merger : MonoBehaviour
         {
             if (!isBottomCase)
             {
+                StartCoroutine(PlayMerge());
                 board[(int)index.x, (int)index.y].Upgrade(nMergeCases);
                 StartCoroutine(MergeNumber(new Vector2((int)index.x, (int)index.y), 1.1f, isUseHammer));
             }
             else
             {
+                StartCoroutine(PlayMerge());
                 board[(int)index.x, (int)index.y - 1].Upgrade(nMergeCases);
                 StartCoroutine(MergeNumber(new Vector2((int)index.x, (int)index.y - 1), 1.1f, isUseHammer));
             }
@@ -133,6 +136,12 @@ public class Merger : MonoBehaviour
                 StartCoroutine(GameplayController.Instance.Spawn(0f));
             }
         }
+    }
+
+    IEnumerator PlayMerge()
+    {
+        yield return new WaitForSeconds(.5f);
+        mergeAudio.Play();
     }
 
 

@@ -31,6 +31,10 @@ public class GameplayController : MonoBehaviour
     [SerializeField] private Text hammerText;
     [SerializeField] private Text colourHammerText;
 
+    [SerializeField] private AudioSource boomAudio;
+    [SerializeField] private AudioSource hammerAudio;
+    [SerializeField] private AudioSource clickAudio;
+
     private void Start()
     {
         instance = this;
@@ -122,6 +126,8 @@ public class GameplayController : MonoBehaviour
 
     public void BreakAround(Vector2 index)
     {
+        boomAudio.Play();
+
         int x = (int)index.x;
         int y = (int)index.y;
 
@@ -216,6 +222,8 @@ public class GameplayController : MonoBehaviour
 
     public void BreakColumn(Vector2 index)
     {
+        boomAudio.Play();
+
         var x = (int)index.x;
         var y = (int)index.y;
         var score = 0;
@@ -239,6 +247,8 @@ public class GameplayController : MonoBehaviour
 
     public void BreakRow(Vector2 index)
     {
+        boomAudio.Play();
+
         var x = (int)index.x;
         var y = (int)index.y;
 
@@ -382,7 +392,6 @@ public class GameplayController : MonoBehaviour
     public void OnClickNumber(Number number)
     {
         if (!isUsingHammer) return;
-
         if (currentHammerType == HammerType.Hammer)
         {
             nHammer--;
@@ -402,6 +411,7 @@ public class GameplayController : MonoBehaviour
                 if (index != (-1, -1)) break;
             }
             Destroy(board[index.Item1, index.Item2].gameObject, .5f);
+            StartCoroutine(PlayHammerAudio());
             DropColumnHeight(index.Item1);
             DropColumnAndMerge(new Vector2(index.Item1, index.Item2));
             hammer.CancelHammer();
@@ -410,7 +420,7 @@ public class GameplayController : MonoBehaviour
         }
         else if (currentHammerType == HammerType.ColourHammer)
         {
-            Debug.Log("dsda");
+            StartCoroutine(PlayHammerAudio());
             nColourHammer--;
             colourHammerText.text = nColourHammer.ToString();
             colourHammer.CancelHammer();
@@ -555,7 +565,15 @@ public class GameplayController : MonoBehaviour
         colourHammerText.text = nColourHammer.ToString();
     }
 
-
+     IEnumerator PlayHammerAudio()
+     {
+        yield return new WaitForSeconds(.01f);
+        hammerAudio.Play();
+     }
+     public void PlayClickAudio()
+    {
+        clickAudio.Play();
+    }
     /*
      * properties
      */

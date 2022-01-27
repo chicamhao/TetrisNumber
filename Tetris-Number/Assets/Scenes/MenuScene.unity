@@ -3871,6 +3871,8 @@ MonoBehaviour:
   load: {fileID: 739345491}
   settings: {fileID: 226105873}
   dialog: {fileID: 1374127670}
+  highScore: {fileID: 626553690}
+  coin: {fileID: 838259633}
 --- !u!1 &2055683348
 GameObject:
   m_ObjectHideFlags: 0
